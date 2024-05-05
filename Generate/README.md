@@ -9,6 +9,6 @@ The way the script is it resizes an image, loops over every pixel, puts the simi
 the corresponding palette color to json.
 
 Run with
-/pixelArt [Image] [Size X] [Size Y] [Threshold]
+./pixelArt [Image] [Output] [Size X] [Size Y] [Threshold]
 
 Where Size X and Y is the size of the outputted image, and threshold is the similarity between palette colors
