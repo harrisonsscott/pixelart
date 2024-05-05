@@ -51,5 +51,17 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "PixelArt.sln"
+    "dotnet.defaultSolution": "PixelArt.sln",
+    "files.associations": {
+        "ostream": "cpp",
+        "array": "cpp",
+        "chrono": "cpp",
+        "compare": "cpp",
+        "functional": "cpp",
+        "ratio": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "variant": "cpp"
+    }
 }
