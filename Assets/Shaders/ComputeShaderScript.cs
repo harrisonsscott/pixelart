@@ -43,7 +43,8 @@ public class ComputeShaderScript : MonoBehaviour
 
         computeShader.Dispatch(0, target.width / 8, target.height / 8, 1);
         
-        material.mainTexture = target;
+        // material.mainTexture = target;
+        material.SetTexture("_MainTex", target);
     }
 
     private void Start() {

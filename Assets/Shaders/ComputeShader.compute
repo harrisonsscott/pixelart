@@ -16,9 +16,5 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     float key = data[id.x * Resolution.x + id.y];
     float3 color = keys[key];
 
-    if (id.x % 8 == 0 || id.y % 8 == 0){
-        color = float3(0, 0, 0);
-    }
-
     Result[id.xy] = float4(color, 0);
 }
