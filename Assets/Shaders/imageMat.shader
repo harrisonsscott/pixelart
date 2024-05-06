@@ -7,8 +7,11 @@ Shader "Unlit/imageMat"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
+        Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+        LOD 200
+
+
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
@@ -48,8 +51,9 @@ Shader "Unlit/imageMat"
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
+                // fixed4 col = fixed4(0,0,0,0);
 
-                if (frac(i.uv.x * 64) < 0.1 || frac(i.uv.y * 64) < 0.1){
+                if (frac(i.uv.x * _GridSize.x) < 0.1 || frac(i.uv.y * _GridSize.y) < 0.1){
                     col = fixed4(0, 0, 0, 1);
                 }
                 return col;

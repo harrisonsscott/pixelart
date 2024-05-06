@@ -6,7 +6,7 @@
 RWTexture2D<float4> Result;
 
 RWStructuredBuffer<int> data; 
-RWStructuredBuffer<float3> keys;
+RWStructuredBuffer<float4> keys;
 
 float2 Resolution;
 
@@ -14,7 +14,7 @@ float2 Resolution;
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
     float key = data[id.x * Resolution.x + id.y];
-    float3 color = keys[key];
+    float4 color = keys[key];
 
-    Result[id.xy] = float4(color, 0);
+    Result[id.xy] = color;
 }

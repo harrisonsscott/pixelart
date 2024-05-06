@@ -8,22 +8,11 @@ using namespace cv;
 using namespace std;
 using json = nlohmann::json;
 
-float getSimilarity(Vec3b color1, Vec3b color2){
-	return
-		0.11 * std::pow(color1[0] - color2[0], 2) +
-		0.59 * std::pow(color1[1] - color2[1], 2) +
-		0.3 * std::pow(color1[2] - color2[2], 2);
-}
-
-string toHex(Vec3b color){
-    int n;
-    char r[4];
-    char g[4];
-    char b[4];
-    sprintf(b, "%X", color[0]);
-    sprintf(g, "%X", color[1]);
-    sprintf(r, "%X", color[2]);
-    return string("#") + r + g + b;
+float getSimilarity(Vec4b color1, Vec4b color2){
+    return
+        0.11 * std::pow(color1[0] - color2[0], 2) +
+        0.59 * std::pow(color1[1] - color2[1], 2) +
+        0.3 * std::pow(color1[2] - color2[2], 2);
 }
 
 int main(int argc, char *argv[]){
@@ -32,7 +21,7 @@ int main(int argc, char *argv[]){
         return -1;
     }
 
-    Mat image = imread(argv[1]);
+    Mat image = imread(argv[1], IMREAD_UNCHANGED);
     if (image.empty()){
         cout << "Error loading image " << argv[1] << endl;
         return -1;
@@ -45,7 +34,7 @@ int main(int argc, char *argv[]){
     }
 
     Mat im;
-    vector<Vec3b> palette; 
+    vector<Vec4b> palette; 
     json j;
     ofstream jsonFile(argv[2]);
 
@@ -61,8 +50,8 @@ int main(int argc, char *argv[]){
             int similarity = 10000000;
             int index = 0;
 
-            Vec3b& color = im.at<Vec3b>(Point(y, x));
-            Vec3b selectedColor = color;
+            Vec4b& color = im.at<Vec4b>(Point(y, x));
+            Vec4b selectedColor = color;
 
             for (int i = 0; i < palette.size(); i++){
                 int similarity2 = getSimilarity(color, palette[i]);
@@ -74,18 +63,20 @@ int main(int argc, char *argv[]){
             }
 
             if (similarity > 100){
-                int pos = palette.size() * 3;
+                int pos = palette.size() * 4;
 
                 j["keys"][pos] = color[2] / 255.0;
                 j["keys"][pos + 1] = color[1] / 255.0;
                 j["keys"][pos + 2] = color[0] / 255.0;
+                j["keys"][pos + 3] = color[3] / 255.0;
+
 
                 palette.push_back(color);
             }
 
             j["data"][x * size.width + y] = index;
 
-            im.at<Vec3b>(Point(y, x)) = selectedColor;
+            im.at<Vec4b>(Point(y, x)) = selectedColor;
         }
     }
 
