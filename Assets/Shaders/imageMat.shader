@@ -4,6 +4,8 @@ Shader "Unlit/imageMat"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _GridSize ("Grid Size", Vector) = (1, 1, 1, 1)
+        _Thickness ("Grid Thickness", Float) = 0.1
+        _Grid ("Render Grid", Float) = 0
     }
     SubShader
     {
@@ -38,6 +40,8 @@ Shader "Unlit/imageMat"
 
             sampler2D _MainTex;
             float2 _GridSize;
+            float _Grid;
+            float _Thickness;
             float4 _MainTex_ST;
 
             v2f vert (appdata v)
@@ -50,6 +54,9 @@ Shader "Unlit/imageMat"
 
             fixed4 frag (v2f i) : SV_Target
             {
+                if (_Grid > 0){
+                    return tex2D(_MainTex, i.uv);
+                }
                 float2 uvRight = i.uv - float2(0.0, 1.0 / _GridSize.x);
                 float2 uvBottom = i.uv - float2(1.0 / _GridSize.y, 0.0);
 
@@ -61,12 +68,12 @@ Shader "Unlit/imageMat"
                 float alpha1 = step(0.1, col1.a);
                 float alpha2 = step(0.1, col2.a);
 
-                if (frac(i.uv.y * _GridSize.y) < 0.1){
+                if (frac(i.uv.y * _GridSize.y) < _Thickness){
                     float alpha = max(alpha0, alpha1);
                     col = fixed4(0, 0, 0, alpha);
                 }
 
-                if (frac(i.uv.x * _GridSize.x) < 0.1){
+                if (frac(i.uv.x * _GridSize.x) < _Thickness){
                     float alpha = max(alpha0, alpha2);
                     col = fixed4(0, 0, 0, alpha);
                 }
