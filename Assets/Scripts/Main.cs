@@ -1,28 +1,26 @@
-using System.IO;
-using Microsoft.Unity.VisualStudio.Editor;
-using Unity.VisualScripting;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 [System.Serializable]
 public class ImageData
 {
     public int[] data;
     public float[] keys;
+    public int[] size;
 }
 
-public class ComputeShaderScript : MonoBehaviour
+public class Main : MonoBehaviour
 {
     public ComputeShader computeShader;
-    public RenderTexture target;
+    public Material imageMaterial;
     public TextAsset textAsset;
-    public ImageData data;
-    public Material material;
 
-    private void Load(string textData){
-        data = JsonUtility.FromJson<ImageData>(textData);
+    public RenderTexture RenderImage(string textData) // renders an image onto a material
+    {
+        ImageData data = JsonUtility.FromJson<ImageData>(textData);
 
-        target = new RenderTexture(64, 64, 24)
+        RenderTexture target = new RenderTexture(data.size[0], data.size[1], 24)
         {
             enableRandomWrite = true,
             filterMode = FilterMode.Point
@@ -44,10 +42,12 @@ public class ComputeShaderScript : MonoBehaviour
         computeShader.Dispatch(0, target.width / 8, target.height / 8, 1);
         
         // material.mainTexture = target;
-        material.SetTexture("_MainTex", target);
+        imageMaterial.SetTexture("_MainTex", target);
+
+        return target;
     }
 
     private void Start() {
-        Load(textAsset.text);
+        RenderImage(textAsset.text);
     }
 }

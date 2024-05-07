@@ -50,12 +50,20 @@ Shader "Unlit/imageMat"
 
             fixed4 frag (v2f i) : SV_Target
             {
+                float2 uvRight = i.uv - float2(0.0, 1.0 / _GridSize.x);
+
                 fixed4 col = tex2D(_MainTex, i.uv);
-                // fixed4 col = fixed4(0,0,0,0);
+                fixed4 col2 = tex2D(_MainTex, uvRight);
 
                 if (frac(i.uv.x * _GridSize.x) < 0.1 || frac(i.uv.y * _GridSize.y) < 0.1){
-                    col = fixed4(0, 0, 0, ceil(min(col.a, 1)));
+                    float alpha0 = step(0.1, col.a);
+                    float alpha1 = step(0.1, col2.a);
+
+                    float alpha = alpha0;
+
+                    col = fixed4(0, 0, 0, alpha);
                 }
+
                 return col;
             }
             ENDCG
