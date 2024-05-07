@@ -39,6 +39,7 @@ int main(int argc, char *argv[]){
     json j;
     ofstream jsonFile(argv[2]);
 
+
     if (!jsonFile.is_open()){
         cout << "Error opening file " << argv[2] << endl;
         return -1;
@@ -81,6 +82,8 @@ int main(int argc, char *argv[]){
         }
     }
 
+    j["size"][0] = size.width;
+    j["size"][1] = size.height;
 
     imwrite("out.png", im);
 
