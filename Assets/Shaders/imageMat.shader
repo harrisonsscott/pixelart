@@ -54,7 +54,7 @@ Shader "Unlit/imageMat"
                 // fixed4 col = fixed4(0,0,0,0);
 
                 if (frac(i.uv.x * _GridSize.x) < 0.1 || frac(i.uv.y * _GridSize.y) < 0.1){
-                    col = fixed4(0, 0, 0, 1);
+                    col = fixed4(0, 0, 0, ceil(min(col.a, 1)));
                 }
                 return col;
             }

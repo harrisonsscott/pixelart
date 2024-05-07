@@ -16,5 +16,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     float key = data[id.x * Resolution.x + id.y];
     float4 color = keys[key];
 
+    color.a = ceil(color.a);
+
     Result[id.xy] = color;
 }

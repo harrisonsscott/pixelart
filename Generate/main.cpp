@@ -12,7 +12,8 @@ float getSimilarity(Vec4b color1, Vec4b color2){
     return
         0.11 * std::pow(color1[0] - color2[0], 2) +
         0.59 * std::pow(color1[1] - color2[1], 2) +
-        0.3 * std::pow(color1[2] - color2[2], 2);
+        0.3 * std::pow(color1[2] - color2[2], 2) +
+        0.1 * std::pow(color1[3] - color2[3], 2); // Adjust the weight for alpha
 }
 
 int main(int argc, char *argv[]){
