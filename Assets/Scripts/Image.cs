@@ -14,6 +14,7 @@ public class Image : MonoBehaviour {
 
     [Header("Camera Movement")]
     public Camera cam;
+    public Vector2 size;
     public Vector3 dragStart;
 
     private void Start() {
@@ -78,8 +79,10 @@ public class Image : MonoBehaviour {
 
         if (Input.GetMouseButton(0)){
             Vector3 difference = dragStart - cam.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 size = new Vector2(cam.orthographicSize * (Screen.width/(float)Screen.height), cam.orthographicSize);
 
             cam.transform.position += difference;
+            cam.transform.position = cam.transform.position.Clamp(new Vector3(-size.x, -size.y, 0), new Vector3(size.x, size.y,0));
         }
     }
 
