@@ -9,6 +9,7 @@ public class Image : MonoBehaviour {
     public ComputeShader computeShader;
     public Material imageMaterial;
     public TextAsset textAsset;
+    public bool usingGrid;
 
     ImageData data;
 
@@ -32,6 +33,8 @@ public class Image : MonoBehaviour {
             RenderImage(textAsset.text);
             Debug.Log("i");
         });
+
+        usingGrid = false;
     }
 
     public RenderTexture RenderImage(string textData) // renders an image onto a material
@@ -62,6 +65,7 @@ public class Image : MonoBehaviour {
         
         // material.mainTexture = target;
         imageMaterial.SetTexture("_MainTex", target);
+        imageMaterial.SetFloat("_Grid", usingGrid == true ? 1 : 0);
         gameObject.GetComponent<RawImage>().material = imageMaterial;
 
         RenderText();
@@ -90,6 +94,14 @@ public class Image : MonoBehaviour {
 
     private void Zoom(){
         cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - Input.mouseScrollDelta.y, 1, 10);
+
+        if (cam.orthographicSize < (originalZoom - 1) && !usingGrid){
+            usingGrid = true;
+            RenderImage(textAsset.text);
+        } else if (cam.orthographicSize > originalZoom && usingGrid){
+            usingGrid = false;
+            RenderImage(textAsset.text);
+        }
     }
 
     private void Update() {
