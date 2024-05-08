@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using UnityEngine;
 
@@ -40,6 +41,21 @@ public static class Extensions {
     public static int[] ToRGBInt (this string str){
         Color color = Func.HexToRGB(str);
         return new int[3] {(int)color.r, (int)color.g, (int)color.b};
+    }
+
+    // vectors
+
+    public static Vector3 Clamp(this Vector3 vector, Vector3 min, Vector3 max){
+        float clampedX = Mathf.Clamp(vector.x, min.x, max.x);
+        float clampedY = Mathf.Clamp(vector.y, min.y, max.y);
+        float clampedZ = Mathf.Clamp(vector.z, min.z, max.z);
+        return new Vector3(clampedX, clampedY, clampedZ);
+    }
+
+    public static Vector2 Clamp(this Vector2 vector, Vector2 min, Vector2 max){
+        float clampedX = Mathf.Clamp(vector.x, min.x, max.x);
+        float clampedY = Mathf.Clamp(vector.y, min.y, max.y);
+        return new Vector2(clampedX, clampedY);
     }
 
     // other
