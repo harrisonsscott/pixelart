@@ -229,9 +229,10 @@ MonoBehaviour:
   computeShader: {fileID: 7200000, guid: c6388da231fd224f7bf1155e4e02aeef, type: 3}
   imageMaterial: {fileID: 2100000, guid: fdf48204d76703acd8cd384e8f535eae, type: 2}
   textAsset: {fileID: 4900000, guid: 411bfd09bfb09a770a91e1ef4d4cf40c, type: 3}
+  originalZoom: 5
   cam: {fileID: 0}
+  size: {x: 0, y: 0}
   dragStart: {x: 0, y: 0, z: 0}
-  defaultZoom: 0
 --- !u!114 &166998269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -447,7 +448,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

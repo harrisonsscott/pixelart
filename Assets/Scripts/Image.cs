@@ -13,6 +13,7 @@ public class Image : MonoBehaviour {
     ImageData data;
 
     [Header("Camera Movement")]
+    public int originalZoom;
     public Camera cam;
     public Vector2 size;
     public Vector3 dragStart;
@@ -20,6 +21,7 @@ public class Image : MonoBehaviour {
     private void Start() {
         cam = Camera.main;
         button = gameObject.GetComponent<Button>();
+        cam.orthographicSize = originalZoom;
 
         // add a button if it doesnt exist
         if (button == null){
@@ -79,14 +81,19 @@ public class Image : MonoBehaviour {
 
         if (Input.GetMouseButton(0)){
             Vector3 difference = dragStart - cam.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 size = new Vector2(cam.orthographicSize * (Screen.width/(float)Screen.height), cam.orthographicSize);
+            Vector2 size = new Vector2(originalZoom * (Screen.width/(float)Screen.height), originalZoom);
 
             cam.transform.position += difference;
             cam.transform.position = cam.transform.position.Clamp(new Vector3(-size.x, -size.y, 0), new Vector3(size.x, size.y,0));
         }
     }
 
+    private void Zoom(){
+        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - Input.mouseScrollDelta.y, 1, 10);
+    }
+
     private void Update() {
         Pan();
+        Zoom();
     }
 }
