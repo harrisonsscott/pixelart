@@ -54,7 +54,7 @@ Shader "Unlit/imageMat"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                if (_Grid > 0){
+                if (_Grid != 1){
                     return tex2D(_MainTex, i.uv);
                 }
                 float2 uvRight = i.uv - float2(0.0, 1.0 / _GridSize.x);

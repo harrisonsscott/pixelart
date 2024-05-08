@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +10,14 @@ public class Image : MonoBehaviour {
     public Material imageMaterial;
     public TextAsset textAsset;
 
+    ImageData data;
+
+    [Header("Camera Movement")]
+    public Camera cam;
+    public Vector3 dragStart;
+
     private void Start() {
+        cam = Camera.main;
         button = gameObject.GetComponent<Button>();
 
         // add a button if it doesnt exist
@@ -25,7 +33,7 @@ public class Image : MonoBehaviour {
 
     public RenderTexture RenderImage(string textData) // renders an image onto a material
     {
-        ImageData data = JsonUtility.FromJson<ImageData>(textData);
+        data = JsonUtility.FromJson<ImageData>(textData);
 
         RenderTexture target = new RenderTexture(data.size[0], data.size[1], 24)
         {
@@ -42,7 +50,7 @@ public class Image : MonoBehaviour {
 
         computeShader.SetTexture(0, "Result", target);
         computeShader.SetVector("Resolution", new Vector2(target.width, target.height));
-        computeShader.SetBool("Grayscale", true);
+        computeShader.SetBool("Grayscale", false);
 
         computeShader.SetBuffer(0, "data", dataBuffer);
         computeShader.SetBuffer(0, "keys", keyBuffer);
@@ -53,6 +61,29 @@ public class Image : MonoBehaviour {
         imageMaterial.SetTexture("_MainTex", target);
         gameObject.GetComponent<RawImage>().material = imageMaterial;
 
+        RenderText();
+
         return target;
+    }
+
+    private void RenderText() // renders a number onto the image's pixels
+    {
+        Vector2 imageSize = new Vector2(data.size[0], data.size[1]);
+    }
+
+    private void Pan(){
+        if (Input.GetMouseButtonDown(0)){
+            dragStart = cam.ScreenToWorldPoint(Input.mousePosition);
+        }
+
+        if (Input.GetMouseButton(0)){
+            Vector3 difference = dragStart - cam.ScreenToWorldPoint(Input.mousePosition);
+
+            cam.transform.position += difference;
+        }
+    }
+
+    private void Update() {
+        Pan();
     }
 }
