@@ -9,14 +9,19 @@ RWStructuredBuffer<int> data;
 RWStructuredBuffer<float4> keys;
 
 float2 Resolution;
+bool Grayscale;
 
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-    float key = data[id.x * Resolution.x + id.y];
+    float key = data[(Resolution.x - 1 - id.y) * Resolution.y + id.x];
     float4 color = keys[key];
 
     color.a = ceil(color.a);
+
+    if (Grayscale){
+        color.rgb = (color.r + color.g + color.b)/3.0;
+    }
 
     Result[id.xy] = color;
 }

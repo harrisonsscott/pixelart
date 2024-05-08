@@ -42,6 +42,7 @@ public class Image : MonoBehaviour {
 
         computeShader.SetTexture(0, "Result", target);
         computeShader.SetVector("Resolution", new Vector2(target.width, target.height));
+        computeShader.SetBool("Grayscale", true);
 
         computeShader.SetBuffer(0, "data", dataBuffer);
         computeShader.SetBuffer(0, "keys", keyBuffer);
