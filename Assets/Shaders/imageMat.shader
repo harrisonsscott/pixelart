@@ -3,7 +3,7 @@ Shader "Unlit/imageMat"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _Copy ("Copy", 2D) = "white" {}
+        _Numbers ("Numbers", 2D) = "white" {}
         _GridSize ("Grid Size", Vector) = (1, 1, 1, 1)
         _Thickness ("Grid Thickness", Float) = 0.1
         _Grid ("Render Grid", Float) = 0
@@ -81,53 +81,6 @@ Shader "Unlit/imageMat"
                     return col;
                 }
                 return col;
-            }
-            ENDCG
-        }
-
-        Pass {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-
-            #include "UnityCG.cginc"
-
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-            };
-
-            struct v2f
-            {
-                float2 uv : TEXCOORD0;
-                UNITY_FOG_COORDS(1)
-                float4 vertex : SV_POSITION;
-            };
-
-            sampler2D _MainTex;
-            sampler2D _Copy;
-            float4 _MainTex_ST;
-            float2 _GridSize;
-
-            v2f vert (appdata v)
-            {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                return o;
-            }
-
-            fixed4 frag (v2f i) : SV_Target
-            {
-                fixed4 col = tex2D(_MainTex, i.uv);
-
-                fixed4 col2 = tex2D(_Copy, frac(i.uv * _GridSize.x)-0.05);
-
-                if ((col2.r + col2.g + col2.b) / 3 > 0.9 || col.a == 0){
-                    return col;
-                }
-                return col2;
             }
             ENDCG
         }

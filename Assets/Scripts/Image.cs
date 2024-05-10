@@ -67,6 +67,7 @@ public class Image : MonoBehaviour {
         // material.mainTexture = target;
         imageMaterial.SetTexture("_MainTex", target);
         imageMaterial.SetFloat("_Grid", usingGrid == true ? 1 : 0);
+
         gameObject.GetComponent<RawImage>().material = imageMaterial;
 
         RenderText();
