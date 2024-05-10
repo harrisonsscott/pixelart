@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class ImageData
 {
+    public bool[] alpha;
     public int[] data;
     public float[] keys;
     public int[] size;

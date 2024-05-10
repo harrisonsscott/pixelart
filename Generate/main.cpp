@@ -34,6 +34,8 @@ int main(int argc, char *argv[]){
         return -1;
     }
 
+    int threshold = atoi(argv[5]);
+
     Mat im;
     vector<Vec4b> palette; 
     json j;
@@ -64,19 +66,23 @@ int main(int argc, char *argv[]){
                 }
             }
 
-            if (similarity > 100){
+            if (similarity > threshold){
                 int pos = palette.size() * 4;
 
                 j["keys"][pos] = color[2] / 255.0;
                 j["keys"][pos + 1] = color[1] / 255.0;
                 j["keys"][pos + 2] = color[0] / 255.0;
                 j["keys"][pos + 3] = color[3] / 255.0;
-
-
                 palette.push_back(color);
             }
 
             j["data"][x * size.width + y] = index;
+            if (color[3] < 255.0){
+                j["alpha"][x * size.width + y] = false;
+            } else {
+                j["alpha"][x * size.width + y] = true;
+            }
+
 
             im.at<Vec4b>(Point(y, x)) = selectedColor;
         }
