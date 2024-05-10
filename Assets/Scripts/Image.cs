@@ -8,7 +8,8 @@ public class Image : MonoBehaviour {
     [HideInInspector] Button button;
     public ComputeShader computeShader;
     public Material imageMaterial;
-    public TextAsset textAsset;
+    public TextAsset textAsset; // json data
+    public GameObject textReference; // text object that is cloned onto the image
     public bool usingGrid;
 
     ImageData data;
@@ -75,7 +76,13 @@ public class Image : MonoBehaviour {
 
     private void RenderText() // renders a number onto the image's pixels
     {
-        Vector2 imageSize = new Vector2(data.size[0], data.size[1]);
+        // Vector2 imageSize = new Vector2(data.size[0], data.size[1]);
+
+        // for (int x = 0; x < imageSize.x; x++){
+        //     for (int y = 0; y < imageSize.y; y++){
+        //         GameObject textClone = Instantiate(textReference, transform);
+        //     }
+        // }
     }
 
     private void Pan(){

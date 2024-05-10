@@ -29,7 +29,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Grid: 1
+    - _Grid: 0
     - _Thickness: 0.1
     - _isBending: 0
     m_Colors:

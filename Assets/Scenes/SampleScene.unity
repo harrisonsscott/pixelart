@@ -229,6 +229,8 @@ MonoBehaviour:
   computeShader: {fileID: 7200000, guid: c6388da231fd224f7bf1155e4e02aeef, type: 3}
   imageMaterial: {fileID: 2100000, guid: fdf48204d76703acd8cd384e8f535eae, type: 2}
   textAsset: {fileID: 4900000, guid: 411bfd09bfb09a770a91e1ef4d4cf40c, type: 3}
+  textReference: {fileID: 0}
+  usingGrid: 0
   originalZoom: 5
   cam: {fileID: 0}
   size: {x: 0, y: 0}
@@ -337,7 +339,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
