@@ -9,7 +9,6 @@ public class Image : MonoBehaviour {
     public ComputeShader computeShader;
     public Material imageMaterial;
     public TextAsset textAsset; // json data
-    public GameObject textReference; // text object that is cloned onto the image
     public bool usingGrid;
 
     ImageData data;

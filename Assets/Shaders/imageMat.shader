@@ -7,8 +7,8 @@ Shader "Unlit/imageMat"
         _Thickness ("Grid Thickness", Float) = 0.1
         _Grid ("Render Grid", Float) = 0
         
-        _MyArr ("Tex", 2DArray) = "" {}
-
+        _Numbers ("Number Array", 2DArray) = "" {}
+        _NumIndex ("Number Index", Float) = 1
     }
     SubShader
     {
@@ -106,9 +106,13 @@ Shader "Unlit/imageMat"
                 float4 vertex : SV_POSITION;
             };
             
-            UNITY_DECLARE_TEX2DARRAY(_MyArr);
+            UNITY_DECLARE_TEX2DARRAY(_Numbers);
             sampler2D _MainTex;
             float4 _MainTex_ST;
+            
+            int _NumIndex;
+            float2 _GridSize;
+            float _Thickness;
 
             v2f vert (appdata v)
             {
@@ -120,10 +124,11 @@ Shader "Unlit/imageMat"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float2 uv = frac(i.uv * 32);
-                fixed4 col = UNITY_SAMPLE_TEX2DARRAY(_MyArr, float3(uv,5));
+                float2 uv = frac(i.uv * _GridSize - _Thickness/2.0);
+                fixed4 col = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv,_NumIndex));
                 fixed4 col2 = tex2D(_MainTex, i.uv);
 
+                // return float4(frac(i.uv * 32 - _Thickness/2.0), 0, 0.5);
                 return float4(col.rgb, min(col.a, col2.a));
             }
             ENDCG
