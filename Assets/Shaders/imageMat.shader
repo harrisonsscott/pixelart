@@ -9,6 +9,7 @@ Shader "Unlit/imageMat"
         
         _Numbers ("Number Array", 2DArray) = "" {}
         _NumIndex ("Number Index", Float) = 1
+        _Spacing ("Number Spacing", Float) = 0.2
     }
     SubShader
     {
@@ -113,6 +114,7 @@ Shader "Unlit/imageMat"
             int _NumIndex;
             float2 _GridSize;
             float _Thickness;
+            float _Spacing;
 
             v2f vert (appdata v)
             {
@@ -125,9 +127,22 @@ Shader "Unlit/imageMat"
             fixed4 frag (v2f i) : SV_Target
             {
                 float2 uv = frac(i.uv * _GridSize - _Thickness/2.0);
-                fixed4 col = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv,_NumIndex));
+
+                fixed4 col = float4(0, 0, 0, 1);
+
+                if (_NumIndex >= 10){
+                    fixed4 col0 = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv+float2(_Spacing, 0), int(_NumIndex / 10)));
+                    fixed4 col1 = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv-float2(_Spacing, 0), _NumIndex - int(_NumIndex / 10) * 10 ));
+
+                    col = col0 + col1;
+                } else {
+                    col = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv,_NumIndex));
+                }
+                
                 fixed4 col2 = tex2D(_MainTex, i.uv);
 
+                float rgb = (col.r + col.g + col.b) / 3.0;
+                
                 // return float4(frac(i.uv * 32 - _Thickness/2.0), 0, 0.5);
                 return float4(col.rgb, min(col.a, col2.a));
             }
