@@ -3,10 +3,12 @@ Shader "Unlit/imageMat"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _Numbers ("Numbers", 2D) = "white" {}
         _GridSize ("Grid Size", Vector) = (1, 1, 1, 1)
         _Thickness ("Grid Thickness", Float) = 0.1
         _Grid ("Render Grid", Float) = 0
+        
+        _MyArr ("Tex", 2DArray) = "" {}
+
     }
     SubShader
     {
@@ -81,6 +83,48 @@ Shader "Unlit/imageMat"
                     return col;
                 }
                 return col;
+            }
+            ENDCG
+        }
+
+        Pass {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            #include "UnityCG.cginc"
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct v2f
+            {
+                float2 uv : TEXCOORD0;
+                float4 vertex : SV_POSITION;
+            };
+            
+            UNITY_DECLARE_TEX2DARRAY(_MyArr);
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                float2 uv = frac(i.uv * 32);
+                fixed4 col = UNITY_SAMPLE_TEX2DARRAY(_MyArr, float3(uv,5));
+                fixed4 col2 = tex2D(_MainTex, i.uv);
+
+                return float4(col.rgb, min(col.a, col2.a));
             }
             ENDCG
         }

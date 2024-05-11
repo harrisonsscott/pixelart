@@ -23,15 +23,23 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _Copy:
+        m_Texture: {fileID: 2800000, guid: eaab010a432b8885d90a45a6ae1060be, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Numbers:
+        m_Texture: {fileID: 28684132378477856, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Grid: 0
+    - _Grid: 1
     - _Thickness: 0.1
     - _isBending: 0
     m_Colors:
-    - _GridSize: {r: 64, g: 64, b: 1, a: 1}
+    - _GridSize: {r: 32, g: 32, b: 1, a: 1}
   m_BuildTextureStacks: []

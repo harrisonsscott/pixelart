@@ -69,31 +69,7 @@ public class Image : MonoBehaviour {
 
         gameObject.GetComponent<RawImage>().material = imageMaterial;
 
-        RenderText();
-
         return target;
-    }
-
-    private void RenderText() // renders a number onto the image's pixels
-    {
-        Vector2 imageSize = new Vector2(data.size[0], data.size[1]);
-        Vector2 gridSize = GetComponent<RectTransform>().sizeDelta / imageSize;
-
-        textReference.GetComponent<RectTransform>().sizeDelta = gridSize;
-
-        if (transform.childCount == 0){
-            for (int x = 0; x < imageSize.x; x++){
-                for (int y = 0; y < imageSize.y; y++){
-                    GameObject textClone = Instantiate(textReference, transform);
-
-                    Vector2 position = new Vector2(x, y) * gridSize - (GetComponent<RectTransform>().sizeDelta/2) + (gridSize*1.5f);
-
-                    textClone.GetComponent<RectTransform>().localPosition = new Vector3(position.x, position.y, 0);
-                    textClone.transform.localScale = new Vector3(1,1,1);
-                    textClone.SetActive(data.alpha[(int)(x * imageSize.x + y)]);
-                }
-            }
-        }
     }
 
     private void Pan(){
