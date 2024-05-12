@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using Unity.Mathematics;
 using UnityEngine;
@@ -23,6 +24,8 @@ public class Image : MonoBehaviour {
 
 
     public RenderTexture overlayTarget;
+    [SerializeField] List<int> dataList;
+    [SerializeField] List<bool> transparentList;
     private void Start() {
         cam = Camera.main;
         button = gameObject.GetComponent<Button>();
@@ -60,6 +63,16 @@ public class Image : MonoBehaviour {
     {
         data = JsonUtility.FromJson<ImageData>(textData);
 
+        // decompress the data
+
+        dataList = new List<int>();
+        transparentList = new List<bool>();
+
+        for (int i = 0; i < data.data.Length; i++){
+            dataList.AddRange(data.data[i].DecompNumbers());
+            transparentList.AddRange(data.data[i].DecompTransparent());
+        }
+
         RenderTexture target = new RenderTexture(data.size[0], data.size[1], 24)
         {
             enableRandomWrite = true,
@@ -74,8 +87,8 @@ public class Image : MonoBehaviour {
 
         target.Create();
 
-        ComputeBuffer dataBuffer = new ComputeBuffer(1, sizeof(int) * data.data.Length);
-        dataBuffer.SetData(data.data);
+        ComputeBuffer dataBuffer = new ComputeBuffer(1, sizeof(int) * dataList.Count);
+        dataBuffer.SetData(dataList.ToArray());
 
         ComputeBuffer keyBuffer = new ComputeBuffer(1, sizeof(float) * data.keys.Length);
         keyBuffer.SetData(data.keys);

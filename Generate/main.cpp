@@ -50,6 +50,7 @@ int main(int argc, char *argv[]){
     resize(image, im, size);
 
     int seq = 1; // amount of sequential numbers (for compression)
+    int seqNumber = 0;
     int seqIndex = 0;
     int prevNum = 0;
 
@@ -79,16 +80,15 @@ int main(int argc, char *argv[]){
                 j["keys"][pos + 3] = color[3] / 255.0;
                 palette.push_back(color);
             }
-
+            cout << index << "x" << prevNum << "x" << seq  << "x" << seqNumber << endl;
             if (index == prevNum){
+                seqNumber = index;
                 seq++;
             } else {
-                j["data"][seqIndex][0] = index; // number
-                j["data"][seqIndex][1] = seq; // amount of sequential numbers
-                j["data"][seqIndex][2] = color[3] < 255.0 ? true : false; // alpha
-
-                // j["alpha"][seqIndex][0] = color[3] < 255.0 ? true : false;
-                // j["alpha"][seqIndex][1] = seq;
+                // cout << index << endl;
+                j["data"][seqIndex]["number"] = seqNumber; // number
+                j["data"][seqIndex]["length"] = seq; // amount of sequential numbers
+                j["data"][seqIndex]["transparent"] = color[3] < 255.0 ? false : true; // alpha
 
                 seqIndex++;
                 seq = 1;
