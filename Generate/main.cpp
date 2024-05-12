@@ -83,6 +83,7 @@ int main(int argc, char *argv[]){
                 j["alpha"][x * size.width + y] = true;
             }
 
+            j["solved"][x * size.width + y] = 0;
 
             im.at<Vec4b>(Point(y, x)) = selectedColor;
         }

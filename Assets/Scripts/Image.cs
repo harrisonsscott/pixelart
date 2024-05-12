@@ -6,12 +6,13 @@ using UnityEngine.UI;
 
 public class Image : MonoBehaviour {
     [HideInInspector] Button button;
-    public ComputeShader computeShader;
+    public ComputeShader computeShader; // converts the json file into an image
+    public ComputeShader finishedShader; // colors squares that have been completed
     public Material imageMaterial;
     public TextAsset textAsset; // json data
     public bool usingGrid;
 
-    ImageData data;
+    public ImageData data;
 
     [Header("Camera Movement")]
     public int originalZoom;
@@ -19,6 +20,8 @@ public class Image : MonoBehaviour {
     public Vector2 size;
     public Vector3 dragStart;
 
+
+    public RenderTexture overlayTarget;
     private void Start() {
         cam = Camera.main;
         button = gameObject.GetComponent<Button>();
@@ -45,6 +48,13 @@ public class Image : MonoBehaviour {
             enableRandomWrite = true,
             filterMode = FilterMode.Point
         };
+
+        overlayTarget = new RenderTexture(data.size[0], data.size[1], 24)
+        {
+            enableRandomWrite = true,
+            filterMode = FilterMode.Point
+        };
+
         target.Create();
 
         ComputeBuffer dataBuffer = new ComputeBuffer(1, sizeof(int) * data.data.Length);
@@ -54,17 +64,20 @@ public class Image : MonoBehaviour {
         keyBuffer.SetData(data.keys);
 
         computeShader.SetTexture(0, "Result", target);
-        computeShader.SetVector("Resolution", new Vector2(target.width, target.height));
+        computeShader.SetVector("Resolution", new Vector2(data.size[0], data.size[1]));
         computeShader.SetBool("Grayscale", false);
 
         computeShader.SetBuffer(0, "data", dataBuffer);
         computeShader.SetBuffer(0, "keys", keyBuffer);
 
         computeShader.Dispatch(0, target.width / 8, target.height / 8, 1);
+
+        finishedShader.SetTexture(0, "Result", overlayTarget);
         
         // material.mainTexture = target;
         imageMaterial.SetTexture("_MainTex", target);
         imageMaterial.SetFloat("_Grid", usingGrid == true ? 1 : 0);
+        imageMaterial.SetFloatArray("_Solved", data.solved);
 
         gameObject.GetComponent<RawImage>().material = imageMaterial;
 

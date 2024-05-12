@@ -10,6 +10,8 @@ Shader "Unlit/imageMat"
         _Numbers ("Number Array", 2DArray) = "" {}
         _NumIndex ("Number Index", Float) = 1
         _Spacing ("Number Spacing", Float) = 0.2
+
+        _Solved ("Solved Bool Array", Int) = 0
     }
     SubShader
     {
@@ -71,7 +73,7 @@ Shader "Unlit/imageMat"
                 float alpha0 = step(0.1, col.a);
                 float alpha1 = step(0.1, col1.a);
                 float alpha2 = step(0.1, col2.a);
-
+ 
                 if (frac(i.uv.y * _GridSize.y) < _Thickness){
                     float alpha = max(alpha0, alpha1);
                     col = fixed4(0, 0, 0, alpha);
@@ -83,7 +85,11 @@ Shader "Unlit/imageMat"
                     col = fixed4(0, 0, 0, alpha);
                     return col;
                 }
-                return col;
+
+                float gs = (col.r + col.g + col.b) / 2.5;
+
+                return float4(gs, gs, gs, col.a);
+                // return col;
             }
             ENDCG
         }
@@ -140,11 +146,14 @@ Shader "Unlit/imageMat"
                 }
                 
                 fixed4 col2 = tex2D(_MainTex, i.uv);
+                float gs = (col2.r + col2.g + col2.b) / 3.0;
 
-                float rgb = (col.r + col.g + col.b) / 3.0;
+                if (gs < 0.3 || gs > 0.7){
+                    col.rgb = 1 - gs;
+                }
                 
                 // return float4(frac(i.uv * 32 - _Thickness/2.0), 0, 0.5);
-                return float4(col.rgb, min(col.a, col2.a));
+                return float4(col.rgb, min(col.a, col2.a) * 0.5);
             }
             ENDCG
         }
