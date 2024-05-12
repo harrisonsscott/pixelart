@@ -66,11 +66,9 @@ public class Image : MonoBehaviour {
         // decompress the data
 
         dataList = new List<int>();
-        transparentList = new List<bool>();
 
         for (int i = 0; i < data.data.Length; i++){
-            dataList.AddRange(data.data[i].DecompNumbers());
-            transparentList.AddRange(data.data[i].DecompTransparent());
+            dataList.AddRange(data.data[i].Decompress());
         }
 
         RenderTexture target = new RenderTexture(data.size[0], data.size[1], 24)

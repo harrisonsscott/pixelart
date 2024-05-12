@@ -80,7 +80,7 @@ int main(int argc, char *argv[]){
                 j["keys"][pos + 3] = color[3] / 255.0;
                 palette.push_back(color);
             }
-            cout << index << "x" << prevNum << "x" << seq  << "x" << seqNumber << endl;
+            
             if (index == prevNum){
                 seqNumber = index;
                 seq++;
@@ -88,7 +88,6 @@ int main(int argc, char *argv[]){
                 // cout << index << endl;
                 j["data"][seqIndex]["number"] = seqNumber; // number
                 j["data"][seqIndex]["length"] = seq; // amount of sequential numbers
-                j["data"][seqIndex]["transparent"] = color[3] < 255.0 ? false : true; // alpha
 
                 seqIndex++;
                 seq = 1;
@@ -117,7 +116,7 @@ int main(int argc, char *argv[]){
 
     cv::imwrite("out.png", im);
 
-    jsonFile << j.dump(4);
+    jsonFile << j.dump();
 
     image.release();
     im.release();
