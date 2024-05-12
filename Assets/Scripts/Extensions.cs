@@ -58,6 +58,14 @@ public static class Extensions {
         return new Vector2(clampedX, clampedY);
     }
 
+    public static float[] ToArray(this Vector2 vec){
+        return new float[2]{vec.x, vec.y};
+    }
+
+    public static float[] ToArray(this Vector3 vec){
+        return new float[3]{vec.x, vec.y, vec.z};
+    }
+
     // other
 
     public static int ToInt(this string str){ // converts a string into an int

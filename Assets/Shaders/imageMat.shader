@@ -6,7 +6,7 @@ Shader "Unlit/imageMat"
         _Overlay ("Overlay Texture", 2D) = "white" {} 
         _GridSize ("Grid Size", Vector) = (1, 1, 1, 1)
         _Thickness ("Grid Thickness", Float) = 0.1
-        _Grid ("Render Grid", Float) = 0
+        _Grid ("Render Grid", Float) = 0 // boolean
         
         _Numbers ("Number Array", 2DArray) = "" {}
         _NumIndex ("Number Index", Float) = 1
@@ -60,15 +60,18 @@ Shader "Unlit/imageMat"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                if (_Grid != 1){
-                    return tex2D(_MainTex, i.uv);
-                }
                 float2 uvRight = i.uv - float2(0.0, 1.0 / _GridSize.x);
                 float2 uvBottom = i.uv - float2(1.0 / _GridSize.y, 0.0);
 
                 fixed4 col = tex2D(_MainTex, i.uv);
                 fixed4 col1 = tex2D(_MainTex, uvRight);
                 fixed4 col2 = tex2D(_MainTex, uvBottom);
+                
+                float gs = (col.r + col.g + col.b) / 2.5;
+
+                if (_Grid != 1){
+                    return float4(gs, gs, gs, col.a);
+                }
 
                 float alpha0 = step(0.1, col.a);
                 float alpha1 = step(0.1, col1.a);
@@ -85,8 +88,7 @@ Shader "Unlit/imageMat"
                     col = fixed4(0, 0, 0, alpha);
                     return col;
                 }
-
-                float gs = (col.r + col.g + col.b) / 2.5;
+                
 
                 return float4(gs, gs, gs, col.a);
                 // return col;

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -83,6 +84,8 @@ public class Image : MonoBehaviour {
             filterMode = FilterMode.Point
         };
 
+        Vector2 resolution = new Vector2(data.size[0], data.size[1]);
+
         target.Create();
 
         ComputeBuffer dataBuffer = new ComputeBuffer(1, sizeof(int) * dataList.Count);
@@ -95,8 +98,7 @@ public class Image : MonoBehaviour {
         finishedBuffer.SetData(data.solved);
 
         computeShader.SetTexture(0, "Result", target);
-        computeShader.SetVector("Resolution", new Vector2(data.size[0], data.size[1]));
-        computeShader.SetBool("Grayscale", false);
+        computeShader.SetVector("Resolution", resolution);
 
         computeShader.SetBuffer(0, "data", dataBuffer);
         computeShader.SetBuffer(0, "keys", keyBuffer);
@@ -104,7 +106,7 @@ public class Image : MonoBehaviour {
         computeShader.Dispatch(0, target.width / 8, target.height / 8, 1);
 
         finishedShader.SetTexture(0, "Result", overlayTarget);
-        finishedShader.SetVector("Resolution", new Vector2(data.size[0], data.size[1]));
+        finishedShader.SetVector("Resolution", resolution);
 
         finishedShader.SetBuffer(0, "data", dataBuffer);
         finishedShader.SetBuffer(0, "keys", keyBuffer);
@@ -115,6 +117,7 @@ public class Image : MonoBehaviour {
         // material.mainTexture = target;
         imageMaterial.SetTexture("_MainTex", target);
         imageMaterial.SetTexture("_Overlay", overlayTarget);
+        imageMaterial.SetFloatArray("_GridSize", resolution.ToArray());
         imageMaterial.SetFloat("_Grid", usingGrid == true ? 1 : 0);
 
         gameObject.GetComponent<RawImage>().material = imageMaterial;
@@ -137,7 +140,7 @@ public class Image : MonoBehaviour {
     }
 
     private void Zoom(){
-        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - Input.mouseScrollDelta.y, 1, 10);
+        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - Input.mouseScrollDelta.y, 1, 20);
 
         if (cam.orthographicSize < (originalZoom - 1) && !usingGrid){
             usingGrid = true;
