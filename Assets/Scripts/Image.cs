@@ -63,6 +63,9 @@ public class Image : MonoBehaviour {
         ComputeBuffer keyBuffer = new ComputeBuffer(1, sizeof(float) * data.keys.Length);
         keyBuffer.SetData(data.keys);
 
+        ComputeBuffer finishedBuffer = new ComputeBuffer(1, sizeof(int) * data.solved.Length);
+        finishedBuffer.SetData(data.solved);
+
         computeShader.SetTexture(0, "Result", target);
         computeShader.SetVector("Resolution", new Vector2(data.size[0], data.size[1]));
         computeShader.SetBool("Grayscale", false);
@@ -73,11 +76,18 @@ public class Image : MonoBehaviour {
         computeShader.Dispatch(0, target.width / 8, target.height / 8, 1);
 
         finishedShader.SetTexture(0, "Result", overlayTarget);
-        
+        finishedShader.SetVector("Resolution", new Vector2(data.size[0], data.size[1]));
+
+        finishedShader.SetBuffer(0, "data", dataBuffer);
+        finishedShader.SetBuffer(0, "keys", keyBuffer);
+        finishedShader.SetBuffer(0, "finished", finishedBuffer);
+
+        finishedShader.Dispatch(0, overlayTarget.width / 8, overlayTarget.height / 8, 1);
+
         // material.mainTexture = target;
         imageMaterial.SetTexture("_MainTex", target);
+        imageMaterial.SetTexture("_Overlay", overlayTarget);
         imageMaterial.SetFloat("_Grid", usingGrid == true ? 1 : 0);
-        imageMaterial.SetFloatArray("_Solved", data.solved);
 
         gameObject.GetComponent<RawImage>().material = imageMaterial;
 

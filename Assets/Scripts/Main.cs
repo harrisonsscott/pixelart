@@ -9,7 +9,7 @@ public class ImageData
     public int[] data;
     public float[] keys;
     public int[] size;
-    public float[] solved;
+    public int[] solved;
 }
 
 public class Main : MonoBehaviour

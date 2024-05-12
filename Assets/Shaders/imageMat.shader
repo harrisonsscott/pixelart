@@ -3,6 +3,7 @@ Shader "Unlit/imageMat"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _Overlay ("Overlay Texture", 2D) = "white" {} 
         _GridSize ("Grid Size", Vector) = (1, 1, 1, 1)
         _Thickness ("Grid Thickness", Float) = 0.1
         _Grid ("Render Grid", Float) = 0
@@ -10,9 +11,8 @@ Shader "Unlit/imageMat"
         _Numbers ("Number Array", 2DArray) = "" {}
         _NumIndex ("Number Index", Float) = 1
         _Spacing ("Number Spacing", Float) = 0.2
-
-        _Solved ("Solved Bool Array", Int) = 0
     }
+
     SubShader
     {
         Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
@@ -154,6 +154,47 @@ Shader "Unlit/imageMat"
                 
                 // return float4(frac(i.uv * 32 - _Thickness/2.0), 0, 0.5);
                 return float4(col.rgb, min(col.a, col2.a) * 0.5);
+            }
+            ENDCG
+        }
+
+        Pass {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            #include "UnityCG.cginc"
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct v2f
+            {
+                float2 uv : TEXCOORD0;
+                float4 vertex : SV_POSITION;
+            };
+
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            sampler2D _Overlay;
+
+
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                float4 overlay = tex2D(_Overlay, i.uv);
+
+                return overlay;
             }
             ENDCG
         }
