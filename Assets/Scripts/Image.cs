@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,7 +17,7 @@ public class Image : MonoBehaviour {
 
     [Header("Camera Movement")]
     public int originalZoom;
-    public Camera cam;
+    public Camera cam; // main camera
     public Vector2 size;
     public Vector3 dragStart;
 
@@ -33,10 +34,26 @@ public class Image : MonoBehaviour {
         }
 
         button.onClick.AddListener(() => {
+            Vector2 pos = GetPosition(Input.mousePosition);
+            Place(pos);
             RenderImage(textAsset.text);
         });
 
         usingGrid = false;
+    }
+
+    public Vector2 GetPosition(Vector3 mousePos){ // turns a mouse position into a position on the image ( (0,0) is the top left )
+        Vector3 worldPosition = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, cam.nearClipPlane));
+        Debug.Log(worldPosition);
+        return new Vector2(0,0);
+    }
+
+    public void Place(int x, int y){
+        
+    }
+
+    public void Place(Vector2 pos){
+        Place((int)pos.x, (int)pos.y);
     }
 
     public RenderTexture RenderImage(string textData) // renders an image onto a material
