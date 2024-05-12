@@ -49,6 +49,10 @@ int main(int argc, char *argv[]){
 
     resize(image, im, size);
 
+    int seq = 1; // amount of sequential numbers (for compression)
+    int seqIndex = 0;
+    int prevNum = 0;
+
     for (int x = 0; x < size.width; x++){
         for (int y = 0; y < size.height; y++){
             int similarity = 10000000;
@@ -76,23 +80,42 @@ int main(int argc, char *argv[]){
                 palette.push_back(color);
             }
 
-            j["data"][x * size.width + y] = index;
-            if (color[3] < 255.0){
-                j["alpha"][x * size.width + y] = false;
+            if (index == prevNum){
+                seq++;
             } else {
-                j["alpha"][x * size.width + y] = true;
+                j["data"][seqIndex][0] = index; // number
+                j["data"][seqIndex][1] = seq; // amount of sequential numbers
+                j["data"][seqIndex][2] = color[3] < 255.0 ? true : false; // alpha
+
+                // j["alpha"][seqIndex][0] = color[3] < 255.0 ? true : false;
+                // j["alpha"][seqIndex][1] = seq;
+
+                seqIndex++;
+                seq = 1;
             }
+
+            // uncompressed form
+
+            // j["data"][x * size.width + y] = index;
+
+            // if (color[3] < 255.0){
+            //     j["alpha"][x * size.width + y] = false;
+            // } else {
+            //     j["alpha"][x * size.width + y] = true;
+            // }
 
             j["solved"][x * size.width + y] = 0;
 
             im.at<Vec4b>(Point(y, x)) = selectedColor;
+
+            prevNum = index;
         }
     }
 
     j["size"][0] = size.width;
     j["size"][1] = size.height;
 
-    imwrite("out.png", im);
+    cv::imwrite("out.png", im);
 
     jsonFile << j.dump(4);
 
