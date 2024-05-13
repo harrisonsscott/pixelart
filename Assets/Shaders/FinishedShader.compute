@@ -18,7 +18,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     float key = data[index];
     float4 color = keys[key];
 
-    color.a = finished[index];
+    color.a = min(ceil(color.a), finished[index]);
     
     Result[id.xy] = color;
 }

@@ -85,12 +85,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Grid: 1
+    - _Grid: 0
     - _NumIndex: 6.26
     - _Solved: 0
     - _Spacing: 0.2
-    - _Thickness: 0.03
+    - _Thickness: 0.01
     - _isBending: 0
     m_Colors:
-    - _GridSize: {r: 8, g: 8, b: 1, a: 1}
+    - _GridSize: {r: 32, g: 32, b: 1, a: 1}
   m_BuildTextureStacks: []

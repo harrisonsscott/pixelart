@@ -19,6 +19,7 @@ public class Image : MonoBehaviour {
     [SerializeField] List<bool> transparentList;
 
     public ImageData data;
+    public int[] solved;
     public Vector2 resolution; // resolution of the image rendered to the screen
 
     [Header("Camera Movement")]
@@ -38,12 +39,13 @@ public class Image : MonoBehaviour {
             button = gameObject.AddComponent<Button>();
         }
 
-        RenderImage(textAsset.text);
+        NewImage(textAsset.text);
+        RenderImage();
 
         button.onClick.AddListener(() => {
             Vector2 pos = GetPosition(Input.mousePosition);
             Place(pos);
-            RenderImage(textAsset.text);
+            RenderImage();
         });
 
         usingGrid = false;
@@ -58,33 +60,35 @@ public class Image : MonoBehaviour {
         gridPos.y -= (resolution.y / 2.0f) - 1;
         
         gridPos.x = Mathf.Floor(gridPos.x);
-        gridPos.y = Mathf.Floor(gridPos.y);
-        
-        Debug.Log(gridPos);
+        gridPos.y = -Mathf.Floor(gridPos.y);
 
-        return new Vector2(0,0);
+        return gridPos;
     }
 
     public void Place(int x, int y){
-        
+        Debug.Log(x);
+        Debug.Log(y);
+        solved[(int)(y * resolution.y + x)] = 1;
     }
 
     public void Place(Vector2 pos){
         Place((int)pos.x, (int)pos.y);
     }
 
-    public RenderTexture RenderImage(string textData) // renders an image onto a material
-    {
+    public void NewImage(string textData){
         data = JsonUtility.FromJson<ImageData>(textData);
 
-        // decompress the data
-
         dataList = new List<int>();
+        solved = data.solved;
 
         for (int i = 0; i < data.data.Length; i++){
             dataList.AddRange(data.data[i].Decompress());
         }
 
+    }
+
+    public RenderTexture RenderImage() // renders an image onto a material
+    {
         RenderTexture target = new RenderTexture(data.size[0], data.size[1], 24)
         {
             enableRandomWrite = true,
@@ -108,7 +112,7 @@ public class Image : MonoBehaviour {
         keyBuffer.SetData(data.keys);
 
         ComputeBuffer finishedBuffer = new ComputeBuffer(1, sizeof(int) * data.solved.Length);
-        finishedBuffer.SetData(data.solved);
+        finishedBuffer.SetData(solved);
 
         computeShader.SetTexture(0, "Result", target);
         computeShader.SetVector("Resolution", resolution);
@@ -157,10 +161,10 @@ public class Image : MonoBehaviour {
 
         if (cam.orthographicSize < (originalZoom - 1) && !usingGrid){
             usingGrid = true;
-            RenderImage(textAsset.text);
+            RenderImage();
         } else if (cam.orthographicSize > originalZoom && usingGrid){
             usingGrid = false;
-            RenderImage(textAsset.text);
+            RenderImage();
         }
     }
 
