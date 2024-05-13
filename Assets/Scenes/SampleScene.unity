@@ -232,16 +232,17 @@ MonoBehaviour:
   textAsset: {fileID: 4900000, guid: cc6d45f8f6e3a8a90b7fc2ad0b5eb2d2, type: 3}
   usingGrid: 0
   data:
-    alpha: 
-    data: 
+    data: []
     keys: []
     size: 
-    solved: []
-  originalZoom: 15
+    solved: 
+  originalZoom: 9
   cam: {fileID: 0}
   size: {x: 0, y: 0}
   dragStart: {x: 0, y: 0, z: 0}
   overlayTarget: {fileID: 0}
+  dataList: 
+  transparentList: 
 --- !u!114 &166998269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,7 +433,7 @@ Camera:
   far clip plane: 1000
   field of view: 31
   orthographic: 1
-  orthographic size: 15
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

@@ -14,8 +14,12 @@ public class Image : MonoBehaviour {
     public Material imageMaterial;
     public TextAsset textAsset; // json data
     public bool usingGrid;
+    public RenderTexture overlayTarget;
+    [SerializeField] List<int> dataList;
+    [SerializeField] List<bool> transparentList;
 
     public ImageData data;
+    public Vector2 resolution; // resolution of the image rendered to the screen
 
     [Header("Camera Movement")]
     public int originalZoom;
@@ -24,9 +28,6 @@ public class Image : MonoBehaviour {
     public Vector3 dragStart;
 
 
-    public RenderTexture overlayTarget;
-    [SerializeField] List<int> dataList;
-    [SerializeField] List<bool> transparentList;
     private void Start() {
         cam = Camera.main;
         button = gameObject.GetComponent<Button>();
@@ -36,6 +37,8 @@ public class Image : MonoBehaviour {
         if (button == null){
             button = gameObject.AddComponent<Button>();
         }
+
+        RenderImage(textAsset.text);
 
         button.onClick.AddListener(() => {
             Vector2 pos = GetPosition(Input.mousePosition);
@@ -47,8 +50,18 @@ public class Image : MonoBehaviour {
     }
 
     public Vector2 GetPosition(Vector3 mousePos){ // turns a mouse position into a position on the image ( (0,0) is the top left )
-        Vector3 worldPosition = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, cam.nearClipPlane));
-        Debug.Log(worldPosition);
+        Vector2 worldPosition = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 0));
+        Vector2 gridPos = (worldPosition * 50) / (new Vector2(512.0f, 512.0f) / resolution);
+        
+        // set (0,0) to the top left
+        gridPos.x += resolution.x / 2.0f;
+        gridPos.y -= (resolution.y / 2.0f) - 1;
+        
+        gridPos.x = Mathf.Floor(gridPos.x);
+        gridPos.y = Mathf.Floor(gridPos.y);
+        
+        Debug.Log(gridPos);
+
         return new Vector2(0,0);
     }
 
@@ -84,7 +97,7 @@ public class Image : MonoBehaviour {
             filterMode = FilterMode.Point
         };
 
-        Vector2 resolution = new Vector2(data.size[0], data.size[1]);
+        resolution = new Vector2(data.size[0], data.size[1]);
 
         target.Create();
 
