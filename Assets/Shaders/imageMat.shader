@@ -3,7 +3,8 @@ Shader "Unlit/imageMat"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _Overlay ("Overlay Texture", 2D) = "white" {} 
+        _Overlay ("Overlay Texture", 2D) = "white" {}
+        _Overlay2 ("Overlay Texture", 2D) = "white" {} 
         _GridSize ("Grid Size", Vector) = (1, 1, 1, 1)
         _Thickness ("Grid Thickness", Float) = 0.1
         _Grid ("Render Grid", Float) = 0 // boolean
@@ -68,6 +69,7 @@ Shader "Unlit/imageMat"
                 fixed4 col2 = tex2D(_MainTex, uvBottom);
                 
                 float gs = (col.r + col.g + col.b) / 2.5;
+                gs = clamp(gs, 0.9, 1);
 
                 if (_Grid != 1){
                     return float4(gs, gs, gs, col.a);
@@ -96,70 +98,68 @@ Shader "Unlit/imageMat"
             ENDCG
         }
 
-        Pass {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+        // Pass {
+        //     CGPROGRAM
+        //     #pragma vertex vert
+        //     #pragma fragment frag
 
-            #include "UnityCG.cginc"
+        //     #include "UnityCG.cginc"
 
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-            };
+        //     struct appdata
+        //     {
+        //         float4 vertex : POSITION;
+        //         float2 uv : TEXCOORD0;
+        //     };
 
-            struct v2f
-            {
-                float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
-            };
+        //     struct v2f
+        //     {
+        //         float2 uv : TEXCOORD0;
+        //         float4 vertex : SV_POSITION;
+        //     };
             
-            UNITY_DECLARE_TEX2DARRAY(_Numbers);
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
+        //     UNITY_DECLARE_TEX2DARRAY(_Numbers);
+        //     sampler2D _MainTex;
+        //     float4 _MainTex_ST;
             
-            int _NumIndex;
-            float2 _GridSize;
-            float _Thickness;
-            float _Spacing;
+        //     int _NumIndex;
+        //     float2 _GridSize;
+        //     float _Thickness;
+        //     float _Spacing;
 
-            v2f vert (appdata v)
-            {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                return o;
-            }
+        //     v2f vert (appdata v)
+        //     {
+        //         v2f o;
+        //         o.vertex = UnityObjectToClipPos(v.vertex);
+        //         o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+        //         return o;
+        //     }
 
-            fixed4 frag (v2f i) : SV_Target
-            {
-                float2 uv = frac(i.uv * _GridSize - _Thickness/2.0);
+        //     fixed4 frag (v2f i) : SV_Target
+        //     {
+        //         float2 uv = frac(i.uv * _GridSize - _Thickness/2.0);
 
-                fixed4 col = float4(0, 0, 0, 1);
+        //         fixed4 col = float4(0, 0, 0, 1);
 
-                if (_NumIndex >= 10){
-                    fixed4 col0 = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv+float2(_Spacing, 0), int(_NumIndex / 10)));
-                    fixed4 col1 = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv-float2(_Spacing, 0), _NumIndex - int(_NumIndex / 10) * 10 ));
+        //         if (_NumIndex >= 10){
+        //             fixed4 col0 = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv+float2(_Spacing, 0), int(_NumIndex / 10)));
+        //             fixed4 col1 = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv-float2(_Spacing, 0), _NumIndex - int(_NumIndex / 10) * 10 ));
 
-                    col = col0 + col1;
-                } else {
-                    col = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv,_NumIndex));
-                }
+        //             col = col0 + col1;
+        //         } else {
+        //             col = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv,_NumIndex));
+        //         }
                 
-                fixed4 col2 = tex2D(_MainTex, i.uv);
-                float gs = (col2.r + col2.g + col2.b) / 3.0;
+        //         fixed4 col2 = tex2D(_MainTex, i.uv);
+        //         float gs = (col2.r + col2.g + col2.b) / 3.0;
 
-                if (gs < 0.3 || gs > 0.7){
-                    col.rgb = 1 - gs;
-                }
                 
-                // return float4(frac(i.uv * 32 - _Thickness/2.0), 0, 0.5);
-                return float4(col.rgb, min(col.a, col2.a) * 0.5);
-            }
-            ENDCG
-        }
+        //         // return float4(frac(i.uv * 32 - _Thickness/2.0), 0, 0.5);
+        //         return float4(col.rgb, min(col.a, col2.a) * 0.5);
+        //     }
+        //     ENDCG
+        // }
 
+        // overlay the images from the compute shader
         Pass {
             CGPROGRAM
             #pragma vertex vert
@@ -182,7 +182,7 @@ Shader "Unlit/imageMat"
             sampler2D _MainTex;
             float4 _MainTex_ST;
             sampler2D _Overlay;
-
+            sampler2D _Overlay2;
 
             v2f vert (appdata v)
             {
@@ -195,8 +195,10 @@ Shader "Unlit/imageMat"
             fixed4 frag (v2f i) : SV_Target
             {
                 float4 overlay = tex2D(_Overlay, i.uv);
+                float4 overlay2 = tex2D(_Overlay2, i.uv);
 
-                return overlay;
+                float4 result = overlay.a * overlay.rgba + (1 - overlay.a) * overlay2.rgba;
+                return result;
             }
             ENDCG
         }

@@ -11,10 +11,12 @@ public class Image : MonoBehaviour {
     [HideInInspector] Button button;
     public ComputeShader computeShader; // converts the json file into an image
     public ComputeShader finishedShader; // colors squares that have been completed
+    public ComputeShader textShader;
     public Material imageMaterial;
     public TextAsset textAsset; // json data
     public bool usingGrid;
     public RenderTexture overlayTarget;
+    public RenderTexture textTarget; // image the text is rendered onto
     [SerializeField] List<int> dataList;
     [SerializeField] List<bool> transparentList;
 
@@ -66,8 +68,6 @@ public class Image : MonoBehaviour {
     }
 
     public void Place(int x, int y){
-        Debug.Log(x);
-        Debug.Log(y);
         solved[(int)(y * resolution.y + x)] = 1;
     }
 
@@ -95,6 +95,12 @@ public class Image : MonoBehaviour {
             filterMode = FilterMode.Point
         };
 
+        textTarget = new RenderTexture(512, 512, 24)
+        {
+            enableRandomWrite = true,
+            filterMode = FilterMode.Point
+        };
+
         overlayTarget = new RenderTexture(data.size[0], data.size[1], 24)
         {
             enableRandomWrite = true,
@@ -116,24 +122,25 @@ public class Image : MonoBehaviour {
 
         computeShader.SetTexture(0, "Result", target);
         computeShader.SetVector("Resolution", resolution);
-
         computeShader.SetBuffer(0, "data", dataBuffer);
         computeShader.SetBuffer(0, "keys", keyBuffer);
-
         computeShader.Dispatch(0, target.width / 8, target.height / 8, 1);
 
         finishedShader.SetTexture(0, "Result", overlayTarget);
         finishedShader.SetVector("Resolution", resolution);
-
         finishedShader.SetBuffer(0, "data", dataBuffer);
         finishedShader.SetBuffer(0, "keys", keyBuffer);
         finishedShader.SetBuffer(0, "finished", finishedBuffer);
-
         finishedShader.Dispatch(0, overlayTarget.width / 8, overlayTarget.height / 8, 1);
+
+        textShader.SetTexture(0, "Result", textTarget);
+        textShader.SetVector("Resolution", resolution);
+        textShader.Dispatch(0, textTarget.width / 8, textTarget.height / 8, 1);
 
         // material.mainTexture = target;
         imageMaterial.SetTexture("_MainTex", target);
         imageMaterial.SetTexture("_Overlay", overlayTarget);
+        imageMaterial.SetTexture("_Overlay2", textTarget);
         imageMaterial.SetFloatArray("_GridSize", resolution.ToArray());
         imageMaterial.SetFloat("_Grid", usingGrid == true ? 1 : 0);
 
