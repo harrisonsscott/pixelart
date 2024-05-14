@@ -53,6 +53,8 @@ Shader "Unlit/imageMat"
             float _Thickness;
             float4 _MainTex_ST;
 
+            sampler2D _TextData;
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -70,7 +72,8 @@ Shader "Unlit/imageMat"
                 fixed4 col1 = tex2D(_MainTex, uvRight);
                 fixed4 col2 = tex2D(_MainTex, uvBottom);
                 
-                float gs = (col.r + col.g + col.b) / 2.5;
+                float gs = (col.r + col.g + col.b) / 3.0;
+
                 gs = clamp(gs, 0.9, 1);
 
                 if (_Grid != 1){
@@ -94,8 +97,10 @@ Shader "Unlit/imageMat"
                 }
                 
 
-                return float4(gs, gs, gs, col.a);
-                // return col;
+                // return tex2D(_TextData, i.uv);
+                // return float4(gs, gs, gs, 1);
+                col.a = 1;
+                return col;
             }
             ENDCG
         }

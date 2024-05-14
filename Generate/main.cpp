@@ -64,8 +64,9 @@ int main(int argc, char *argv[]){
 
             for (int i = 0; i < palette.size(); i++){
                 int similarity2 = getSimilarity(color, palette[i]);
-                if (similarity2 < similarity){
+                if (similarity2 <= similarity){
                     similarity = similarity2;
+                    selectedColor[3] = selectedColor[3] == 1 ? 1 : 0;
                     selectedColor = palette[i];
                     index = i;
                 }
@@ -81,16 +82,33 @@ int main(int argc, char *argv[]){
                 palette.push_back(color);
             }
             
+            // if (index == prevNum){
+            //     seqNumber = index;
+            //     seq++;
+            // } else {
+            //     // cout << index << endl;
+            //     j["data"][seqIndex]["number"] = seqNumber; // number
+            //     j["data"][seqIndex]["length"] = seq; // amount of sequential numbers
+
+            //     seqIndex++;
+            //     seq = 1;
+            // }
+
             if (index == prevNum){
                 seqNumber = index;
+
+                // im.at<Vec4b>(Point(y, x)) = palette[index];
+
                 seq++;
             } else {
-                // cout << index << endl;
                 j["data"][seqIndex]["number"] = seqNumber; // number
                 j["data"][seqIndex]["length"] = seq; // amount of sequential numbers
 
+                // im.at<Vec4b>(Point(y, x)) = Vec4b(255,255,255,255);
+
                 seqIndex++;
                 seq = 1;
+                seqNumber = index;
             }
 
             // uncompressed form
