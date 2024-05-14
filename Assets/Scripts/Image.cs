@@ -19,10 +19,11 @@ public class Image : MonoBehaviour {
     public RenderTexture textTarget; // image the text is rendered onto
     [SerializeField] List<int> dataList;
     [SerializeField] List<bool> transparentList;
+    public Texture2DArray numbers;
 
     public ImageData data;
     public int[] solved;
-    public Vector2 resolution; // resolution of the image rendered to the screen
+    public Vector2 resolution; // resolution of the image rendered to the screen (not actual amount of pixels)
 
     [Header("Camera Movement")]
     public int originalZoom;
@@ -95,7 +96,7 @@ public class Image : MonoBehaviour {
             filterMode = FilterMode.Point
         };
 
-        textTarget = new RenderTexture(512, 512, 24)
+        textTarget = new RenderTexture(2048, 2048, 24)
         {
             enableRandomWrite = true,
             filterMode = FilterMode.Point
@@ -110,7 +111,10 @@ public class Image : MonoBehaviour {
         resolution = new Vector2(data.size[0], data.size[1]);
 
         target.Create();
+        textTarget.Create();
+        overlayTarget.Create();
 
+        Debug.Log(dataList);
         ComputeBuffer dataBuffer = new ComputeBuffer(1, sizeof(int) * dataList.Count);
         dataBuffer.SetData(dataList.ToArray());
 
@@ -134,7 +138,9 @@ public class Image : MonoBehaviour {
         finishedShader.Dispatch(0, overlayTarget.width / 8, overlayTarget.height / 8, 1);
 
         textShader.SetTexture(0, "Result", textTarget);
-        textShader.SetVector("Resolution", resolution);
+        textShader.SetTexture(0, "Numbers", numbers);
+        textShader.SetVector("Resolution", new Vector2(textTarget.width, textTarget.height));
+        textShader.SetVector("gridSize", resolution);
         textShader.Dispatch(0, textTarget.width / 8, textTarget.height / 8, 1);
 
         // material.mainTexture = target;
