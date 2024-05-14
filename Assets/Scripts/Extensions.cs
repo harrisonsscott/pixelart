@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 
@@ -76,5 +77,17 @@ public static class Extensions {
 
     public static bool HasComponent <T>(this GameObject obj) where T:Component{
         return obj.GetComponent<T>() != null;
+    }
+
+    public static List<float> ToFloat(this List<int> list){
+        List<float> floatList = new List<float>(list.Count);
+
+        foreach (int value in list)
+        {
+            float floatValue = (float)value;
+            floatList.Add(floatValue);
+        }
+
+        return floatList;
     }
 }

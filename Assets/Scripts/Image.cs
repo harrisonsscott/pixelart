@@ -16,8 +16,11 @@ public class Image : MonoBehaviour {
     public TextAsset textAsset; // json data
     public bool usingGrid;
     public RenderTexture overlayTarget;
+    public RenderTexture textTarget;
+
     [SerializeField] List<int> dataList;
     [SerializeField] List<bool> transparentList;
+
     public Texture2DArray numbers;
 
     public ImageData data;
@@ -95,6 +98,12 @@ public class Image : MonoBehaviour {
             filterMode = FilterMode.Point
         };
 
+        textTarget = new RenderTexture(data.size[0], data.size[1], 24)
+        {
+            enableRandomWrite = true,
+            filterMode = FilterMode.Point
+        };
+
         overlayTarget = new RenderTexture(data.size[0], data.size[1], 24)
         {
             enableRandomWrite = true,
@@ -129,10 +138,16 @@ public class Image : MonoBehaviour {
         finishedShader.SetBuffer(0, "finished", finishedBuffer);
         finishedShader.Dispatch(0, overlayTarget.width / 8, overlayTarget.height / 8, 1);
 
+        textShader.SetTexture(0, "Result", textTarget);
+        textShader.SetVector("Resolution", resolution);
+        textShader.SetBuffer(0, "data", dataBuffer);
+        textShader.Dispatch(0, textTarget.width / 8, textTarget.height / 8, 1);
+
         // material.mainTexture = target;
         imageMaterial.SetTexture("_MainTex", target);
         imageMaterial.SetTexture("_Overlay", overlayTarget);
         imageMaterial.SetFloatArray("_GridSize", resolution.ToArray());
+        imageMaterial.SetTexture("_TextData", textTarget);
         imageMaterial.SetFloat("_Grid", usingGrid == true ? 1 : 0);
 
         gameObject.GetComponent<RawImage>().material = imageMaterial;

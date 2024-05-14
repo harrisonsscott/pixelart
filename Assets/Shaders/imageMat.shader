@@ -9,10 +9,11 @@ Shader "Unlit/imageMat"
         _Thickness ("Grid Thickness", Float) = 0.1
         _Grid ("Render Grid", Float) = 0 // boolean
         
-        _NumberData ("Number Data Array", Float) = 1
         _Numbers ("Number Array", 2DArray) = "" {}
         _NumIndex ("Number Index", Float) = 1
         _Spacing ("Number Spacing", Float) = 0.2
+
+        _TextData ("Text Data", 2D) = "white" {}
     }
 
     SubShader
@@ -128,7 +129,7 @@ Shader "Unlit/imageMat"
             float _Thickness;
             float _Spacing;
 
-            int _NumberData[16384];
+            sampler2D _TextData;
 
             v2f vert (appdata v)
             {
@@ -143,6 +144,9 @@ Shader "Unlit/imageMat"
                 float2 uv = frac(i.uv * _GridSize - _Thickness/2.0);
 
                 fixed4 col = float4(0, 0, 0, 1);
+
+                float2 index = float2(i.uv);
+                _NumIndex = tex2D(_TextData, index).r * 100.0;
 
                 if (_NumIndex >= 10){
                     fixed4 col0 = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv+float2(_Spacing, 0), int(_NumIndex / 10))); // first digit

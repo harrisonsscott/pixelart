@@ -90,11 +90,14 @@ Material:
     m_Ints: []
     m_Floats:
     - _Grid: 0
+    - _LengthData: 1
     - _NumIndex: 6.26
+    - _NumberData: 1.37
     - _Solved: 0
     - _Spacing: 0.2
     - _Thickness: 0.04
     - _isBending: 0
     m_Colors:
     - _GridSize: {r: 32, g: 32, b: 1, a: 1}
+    - _NumberData: {r: 1, g: 2, b: 3, a: 4}
   m_BuildTextureStacks: []
