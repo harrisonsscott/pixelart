@@ -80,6 +80,12 @@ int main(int argc, char *argv[]){
                 j["keys"][pos + 2] = color[0] / 255.0;
                 j["keys"][pos + 3] = color[3] / 255.0;
                 palette.push_back(color);
+
+                // shader can only render numbers up to 99
+                if (palette.size() > 99){
+                    cout << "Can't go above 99 colors, increase the threshold!" << endl;
+                    return -1;
+                }
             }
 
             if (index == prevNum){
