@@ -230,7 +230,7 @@ MonoBehaviour:
   finishedShader: {fileID: 7200000, guid: 06cb1e3da90ca5a27875ec010b2b0df1, type: 3}
   textShader: {fileID: 7200000, guid: 6962327a86de37e37acf6354b3ee8cb1, type: 3}
   imageMaterial: {fileID: 2100000, guid: fdf48204d76703acd8cd384e8f535eae, type: 2}
-  textAsset: {fileID: 4900000, guid: cc6d45f8f6e3a8a90b7fc2ad0b5eb2d2, type: 3}
+  textAsset: {fileID: 4900000, guid: 49bf317a1e796f24b9fa4d2cef875186, type: 3}
   usingGrid: 0
   overlayTarget: {fileID: 0}
   textTarget: {fileID: 0}

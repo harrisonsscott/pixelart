@@ -81,31 +81,13 @@ int main(int argc, char *argv[]){
                 j["keys"][pos + 3] = color[3] / 255.0;
                 palette.push_back(color);
             }
-            
-            // if (index == prevNum){
-            //     seqNumber = index;
-            //     seq++;
-            // } else {
-            //     // cout << index << endl;
-            //     j["data"][seqIndex]["number"] = seqNumber; // number
-            //     j["data"][seqIndex]["length"] = seq; // amount of sequential numbers
-
-            //     seqIndex++;
-            //     seq = 1;
-            // }
 
             if (index == prevNum){
                 seqNumber = index;
-
-                // im.at<Vec4b>(Point(y, x)) = palette[index];
-
                 seq++;
             } else {
                 j["data"][seqIndex]["number"] = seqNumber; // number
                 j["data"][seqIndex]["length"] = seq; // amount of sequential numbers
-
-                // im.at<Vec4b>(Point(y, x)) = Vec4b(255,255,255,255);
-
                 seqIndex++;
                 seq = 1;
                 seqNumber = index;

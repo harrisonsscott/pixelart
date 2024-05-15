@@ -98,9 +98,7 @@ Shader "Unlit/imageMat"
                 
 
                 // return tex2D(_TextData, i.uv);
-                // return float4(gs, gs, gs, 1);
-                col.a = 1;
-                return col;
+                return float4(gs, gs, gs, col.a);
             }
             ENDCG
         }
@@ -151,7 +149,7 @@ Shader "Unlit/imageMat"
                 fixed4 col = float4(0, 0, 0, 1);
 
                 float2 index = float2(i.uv);
-                _NumIndex = tex2D(_TextData, index).r * 100.0;
+                _NumIndex = tex2D(_TextData, index).r * 255.0;
 
                 if (_NumIndex >= 10){
                     fixed4 col0 = UNITY_SAMPLE_TEX2DARRAY(_Numbers, float3(uv+float2(_Spacing, 0), int(_NumIndex / 10))); // first digit
