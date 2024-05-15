@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 // place in the main image
@@ -32,6 +31,11 @@ public class Image : MonoBehaviour {
     public Camera cam; // main camera
     public Vector2 size;
     public Vector3 dragStart;
+    public RaycastHit hit;
+
+    public GraphicRaycaster m_Raycaster;
+    PointerEventData m_PointerEventData;
+    EventSystem m_EventSystem;
 
 
     private void Start() {
@@ -51,6 +55,7 @@ public class Image : MonoBehaviour {
             Vector2 pos = GetPosition(Input.mousePosition);
             Place(pos);
             RenderImage();
+            // Raycast();
         });
 
         usingGrid = false;
@@ -89,6 +94,7 @@ public class Image : MonoBehaviour {
         }
 
     }
+
 
     public RenderTexture RenderImage() // renders an image onto a material
     {
@@ -182,7 +188,25 @@ public class Image : MonoBehaviour {
     }
 
     private void Update() {
-        Pan();
-        Zoom();
+        if (!UsingUI()){
+            Pan();
+            Zoom();
+        }
+    }
+    public bool UsingUI(){ // raycasts to see if the user is current using the ui
+        m_PointerEventData = new PointerEventData(m_EventSystem){
+            position = Input.mousePosition
+        };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+
+        m_Raycaster.Raycast(m_PointerEventData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            return true;
+        }
+        
+        return false;
     }
 }
