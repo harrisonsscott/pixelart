@@ -14,6 +14,7 @@ float2 Resolution;
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
+    // generates an overlay image for the finished result
     int index = (Resolution.x - 1 - id.y) * Resolution.y + id.x;
     float key = data[index];
     float4 color = keys[key];

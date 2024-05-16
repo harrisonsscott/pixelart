@@ -8,19 +8,24 @@ using UnityEngine.UI;
 
 public class Image : MonoBehaviour {
     [HideInInspector] Button button;
-    public ComputeShader computeShader; // converts the json file into an image
+
+    [Header("Shaders")]
+    public ComputeShader generateShader; // converts the json file into an image
     public ComputeShader finishedShader; // colors squares that have been completed
     public ComputeShader textShader;
     public Material imageMaterial;
+
+    [Header("Data")]
     public TextAsset textAsset; // json data
     public bool usingGrid;
-    public RenderTexture overlayTarget;
-    public RenderTexture textTarget;
-
     [SerializeField] List<int> dataList;
     [SerializeField] List<bool> transparentList;
 
-    public Texture2DArray numbers;
+    [Header("Textures")]
+    public RenderTexture overlayTarget;
+    public RenderTexture textTarget; // generated in textShader.compute and sampled in imageMat.shader
+    public RenderTexture target;
+    public Texture2DArray numbers; // 2d texture array with numbers 0-9
 
     public ImageData data;
     public int[] solved;
@@ -33,7 +38,8 @@ public class Image : MonoBehaviour {
     public Vector3 dragStart;
     public RaycastHit hit;
 
-    public GraphicRaycaster m_Raycaster;
+    [Header("Raycasting")]
+    public GraphicRaycaster mainCanvasGR;
     PointerEventData m_PointerEventData;
     EventSystem m_EventSystem;
 
@@ -98,7 +104,7 @@ public class Image : MonoBehaviour {
 
     public RenderTexture RenderImage() // renders an image onto a material
     {
-        RenderTexture target = new RenderTexture(data.size[0], data.size[1], 24)
+        target = new RenderTexture(data.size[0], data.size[1], 24)
         {
             enableRandomWrite = true,
             filterMode = FilterMode.Point
@@ -131,11 +137,11 @@ public class Image : MonoBehaviour {
         ComputeBuffer finishedBuffer = new ComputeBuffer(1, sizeof(int) * data.solved.Length);
         finishedBuffer.SetData(solved);
 
-        computeShader.SetTexture(0, "Result", target);
-        computeShader.SetVector("Resolution", resolution);
-        computeShader.SetBuffer(0, "data", dataBuffer);
-        computeShader.SetBuffer(0, "keys", keyBuffer);
-        computeShader.Dispatch(0, target.width / 8, target.height / 8, 1);
+        generateShader.SetTexture(0, "Result", target);
+        generateShader.SetVector("Resolution", resolution);
+        generateShader.SetBuffer(0, "data", dataBuffer);
+        generateShader.SetBuffer(0, "keys", keyBuffer);
+        generateShader.Dispatch(0, target.width / 8, target.height / 8, 1);
 
         finishedShader.SetTexture(0, "Result", overlayTarget);
         finishedShader.SetVector("Resolution", resolution);
@@ -200,7 +206,7 @@ public class Image : MonoBehaviour {
 
         List<RaycastResult> results = new List<RaycastResult>();
 
-        m_Raycaster.Raycast(m_PointerEventData, results);
+        mainCanvasGR.Raycast(m_PointerEventData, results);
 
         foreach (RaycastResult result in results)
         {

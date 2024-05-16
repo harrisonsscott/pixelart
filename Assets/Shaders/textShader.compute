@@ -11,5 +11,6 @@ float2 Resolution;
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
+    // makes a texture where the red values represent the keys for the colors, ex rgb(5,0, 0) represents color #5
     Result[id.xy] = float4(data[Resolution.x * Resolution.y - (id.y + 1) * Resolution.y + id.x] / 255.0 ,0,0,1);
 }

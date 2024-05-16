@@ -165,10 +165,13 @@ Shader "Unlit/imageMat"
                 fixed4 col2 = tex2D(_MainTex, i.uv);
                 float gs = (col2.r + col2.g + col2.b) / 3.0;
 
+                col.a = min(col.a, col2.a) * 0.5;
+
                 if (_NumIndex == _NumSelected){
-                    return float4(col.rgb, min(col.a, col2.a) * 0.5 + 0.15);
+                    col.a += 0.15;
+                    return col;
                 } else {
-                    return float4(col.rgb, min(col.a, col2.a) * 0.5);
+                    return col;
                 }
 
                 
