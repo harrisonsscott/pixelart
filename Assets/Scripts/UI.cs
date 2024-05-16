@@ -15,6 +15,12 @@ public class UI : MonoBehaviour
         PlaceColor("#ff00ff");
     }
 
+    public void ClearColors(){ // removes all the children in colorContent
+        for (int i = 0; i < colorContent.childCount; i++){
+            Destroy(colorContent.GetChild(i).gameObject);
+        }
+    }
+
     public void PlaceColor(string hex){ // clones colorReference and places it in colorContent
         Color color = hex.ToRGB();
         GameObject clone = Instantiate(colorReference, colorContent);
