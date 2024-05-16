@@ -86,4 +86,4 @@ _deps
 
 # Other
 /Generate/*.png
-/Generate/*.json
+*.json

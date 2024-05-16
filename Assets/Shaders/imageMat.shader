@@ -9,6 +9,7 @@ Shader "Unlit/imageMat"
         _Thickness ("Grid Thickness", Float) = 0.1
         _Grid ("Render Grid", Float) = 0 // boolean
         
+        _NumSelected ("Selected Number", Float) = 1
         _Numbers ("Number Array", 2DArray) = "" {}
         _NumIndex ("Number Index", Float) = 1
         _Spacing ("Number Spacing", Float) = 0.2
@@ -126,7 +127,8 @@ Shader "Unlit/imageMat"
             UNITY_DECLARE_TEX2DARRAY(_Numbers);
             sampler2D _MainTex;
             float4 _MainTex_ST;
-            
+
+            int _NumSelected;
             int _NumIndex;
             float2 _GridSize;
             float _Thickness;
@@ -163,9 +165,14 @@ Shader "Unlit/imageMat"
                 fixed4 col2 = tex2D(_MainTex, i.uv);
                 float gs = (col2.r + col2.g + col2.b) / 3.0;
 
+                if (_NumIndex == _NumSelected){
+                    return float4(col.rgb, min(col.a, col2.a) * 0.5 + 0.15);
+                } else {
+                    return float4(col.rgb, min(col.a, col2.a) * 0.5);
+                }
+
                 
                 // return float4(frac(i.uv * 32 - _Thickness/2.0), 0, 0.5);
-                return float4(col.rgb, min(col.a, col2.a) * 0.5);
             }
             ENDCG
         }
