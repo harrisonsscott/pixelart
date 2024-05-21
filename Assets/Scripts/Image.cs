@@ -17,6 +17,7 @@ public class Image : MonoBehaviour {
     public Material imageMaterial;
 
     [Header("Data")]
+    public int currentNumber;
     public TextAsset textAsset; // json data
     public bool usingGrid;
     [SerializeField] List<int> dataList;
@@ -65,6 +66,7 @@ public class Image : MonoBehaviour {
 
         NewImage(textAsset.text);
         RenderImage();
+        ChangeCurrentNumber(5);
 
         button.onClick.AddListener(() => {
             Vector2 pos = GetPosition(Input.mousePosition);
@@ -99,11 +101,20 @@ public class Image : MonoBehaviour {
     }
 
     public bool IsDrawn(int x, int y){ // returns true if the selected pixel has been colored in
+        Debug.Log(dataList[(int)(y * resolution.y + x)]);
         return solved[(int)(y * resolution.y + x)] == 1;
     }
 
     public bool IsDrawn(Vector2 pos){
         return IsDrawn((int)pos.x, (int)pos.y);
+    }
+
+    public int GetNumber(int x, int y){ // returns the number of the selected pixel
+        return dataList[(int)(y * resolution.y + x)];
+    }
+
+    public int GetNumber(Vector2 pos){
+        return GetNumber((int)pos.x, (int)pos.y);
     }
 
     public void NewImage(string textData){
@@ -200,9 +211,15 @@ public class Image : MonoBehaviour {
         return target;
     }
 
+    private void ChangeCurrentNumber(int number){ // changes the current number and updates the shader
+        currentNumber = number;
+
+        imageMaterial.SetFloat("_NumSelected", currentNumber);
+    }
+
     private void Pan(){
         if (Input.GetMouseButtonDown(0)){
-            if (IsDrawn(GetPosition(Input.mousePosition))){
+            if (GetNumber(GetPosition(Input.mousePosition)) == currentNumber){
                 isDrawing = true;
                 return;
             } else {
