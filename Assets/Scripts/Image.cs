@@ -34,8 +34,7 @@ public class Image : MonoBehaviour {
     public Vector2 resolution; // resolution of the image rendered to the screen (not actual amount of pixels)
 
     [Header("Camera Movement")]
-    public float distSinceMouseDown; // prevents panning while drawing
-    public float timeSinceMouseDown; // determines whether the player is dragging or drawing
+    public bool isDrawing; // determines whether the player is drawing or panning
     public int originalZoom;
     public Camera cam; // main camera
     public Vector2 size;
@@ -52,7 +51,6 @@ public class Image : MonoBehaviour {
 
 
     private void Start() {
-        timeSinceMouseDown = 0;
         if (classUI == null)
             classUI = FindAnyObjectByType<UI>();
     
@@ -98,6 +96,14 @@ public class Image : MonoBehaviour {
 
     public void Place(Vector2 pos){
         Place((int)pos.x, (int)pos.y);
+    }
+
+    public bool IsDrawn(int x, int y){ // returns true if the selected pixel has been colored in
+        return solved[(int)(y * resolution.y + x)] == 1;
+    }
+
+    public bool IsDrawn(Vector2 pos){
+        return IsDrawn((int)pos.x, (int)pos.y);
     }
 
     public void NewImage(string textData){
@@ -195,21 +201,21 @@ public class Image : MonoBehaviour {
     }
 
     private void Pan(){
-        Vector3 difference = dragStart - cam.ScreenToWorldPoint(Input.mousePosition);
-
-        timeSinceMouseDown += Time.deltaTime;
-        distSinceMouseDown += difference.magnitude * Time.deltaTime;
-
         if (Input.GetMouseButtonDown(0)){
+            if (IsDrawn(GetPosition(Input.mousePosition))){
+                isDrawing = true;
+                return;
+            } else {
+                isDrawing = false;
+            }
             dragStart = cam.ScreenToWorldPoint(Input.mousePosition);
         }
 
-        if (timeSinceMouseDown > 1f && distSinceMouseDown < 0.5f){
-            distSinceMouseDown = 0;
+        if (isDrawing)
             return;
-        }
 
         if (Input.GetMouseButton(0)){
+            Vector3 difference = dragStart - cam.ScreenToWorldPoint(Input.mousePosition);
             Vector2 size = new Vector2(originalZoom * (Screen.width/(float)Screen.height), originalZoom);
 
         
@@ -231,11 +237,6 @@ public class Image : MonoBehaviour {
     }
 
     private void Update() {
-        if (Input.GetMouseButtonDown(0)){
-            distSinceMouseDown = 0;
-            timeSinceMouseDown = 0;
-        }
-
         if (!UsingUI()){
             Pan();
             Zoom();
