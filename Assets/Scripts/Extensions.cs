@@ -44,6 +44,10 @@ public static class Extensions {
         return new int[3] {(int)color.r, (int)color.g, (int)color.b};
     }
 
+    public static Color ToColor (this Vector4 v){
+        return new Color(v[0], v[1], v[2], v[3]);
+    }
+
     // vectors
 
     public static Vector3 Clamp(this Vector3 vector, Vector3 min, Vector3 max){

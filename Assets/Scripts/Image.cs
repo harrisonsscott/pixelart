@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 // place in the main image
 
+// renders the main image along with camera movement for it
+
 public class Image : MonoBehaviour {
     [HideInInspector] Button button;
 
@@ -19,6 +21,7 @@ public class Image : MonoBehaviour {
     public bool usingGrid;
     [SerializeField] List<int> dataList;
     [SerializeField] List<bool> transparentList;
+    [SerializeField] List<Vector4> colorsList;
 
     [Header("Textures")]
     public RenderTexture overlayTarget;
@@ -42,8 +45,14 @@ public class Image : MonoBehaviour {
     PointerEventData m_PointerEventData;
     EventSystem m_EventSystem;
 
+    [Header("UI")]
+    public UI classUI;
+
 
     private void Start() {
+        if (classUI == null)
+            classUI = FindAnyObjectByType<UI>();
+    
         cam = Camera.main;
         button = gameObject.GetComponent<Button>();
         cam.orthographicSize = originalZoom;
@@ -92,10 +101,26 @@ public class Image : MonoBehaviour {
         data = JsonUtility.FromJson<ImageData>(textData);
 
         dataList = new List<int>();
+        colorsList = new List<Vector4>();
         solved = data.solved;
 
+        // decompress the data
         for (int i = 0; i < data.data.Length; i++){
             dataList.AddRange(data.data[i].Decompress());
+        }
+
+        // extract the colors (ignores the transparent color)
+        for (int i = 4; i < data.keys.Length; i+=4){
+            Vector4 col = new Vector4(0,0,0,0);
+
+            for (int v = 0; v < 4; v++){
+                col[v] = data.keys[i + v];
+            }        
+
+            if (col[3] > 0.1){
+                colorsList.Add(col);
+                classUI.PlaceColor(col);
+            }
         }
 
     }

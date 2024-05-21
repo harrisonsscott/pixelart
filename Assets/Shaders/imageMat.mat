@@ -93,7 +93,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Grid: 0
+    - _Grid: 1
     - _LengthData: 1
     - _NumIndex: 6.26
     - _NumSelected: 2.54
