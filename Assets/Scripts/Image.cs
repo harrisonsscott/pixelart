@@ -230,16 +230,23 @@ public class Image : MonoBehaviour {
             dragStart = cam.ScreenToWorldPoint(Input.mousePosition);
         }
 
-        if (isDrawing)
-            return;
-
         if (Input.GetMouseButton(0)){
-            Vector3 difference = dragStart - cam.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 size = new Vector2(originalZoom * (Screen.width/(float)Screen.height), originalZoom);
+            if (isDrawing){
+                Vector2 pos = GetPosition(Input.mousePosition);
+                if (GetNumber(pos) == currentNumber && !IsDrawn(pos)){
+                    Place(pos);
+                    RenderImage();
+                    return;
+                }
+            } else {
+                Vector3 difference = dragStart - cam.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 size = new Vector2(originalZoom * (Screen.width/(float)Screen.height), originalZoom);
 
-        
-            cam.transform.position += difference;
-            cam.transform.position = cam.transform.position.Clamp(new Vector3(-size.x, -size.y, 0), new Vector3(size.x, size.y,0));
+            
+                cam.transform.position += difference;
+                cam.transform.position = cam.transform.position.Clamp(new Vector3(-size.x, -size.y, 0), new Vector3(size.x, size.y,0));
+                return;
+            }
         }
     }
 

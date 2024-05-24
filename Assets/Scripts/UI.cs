@@ -16,7 +16,7 @@ public class UI : MonoBehaviour
         ClearColors();
     }
 
-    public void ChangeColor(Color color){
+    public void ChangeColor(Color color){ // changes the color indicator
         colorIndicator.GetComponent<RawImage>().color = color;
     }
 
@@ -35,6 +35,9 @@ public class UI : MonoBehaviour
     }
 
     public void PlaceColor(Color color){ // clones colorReference and places it in colorContent
+        if (colorContent.childCount == 0){
+            ChangeColor(color);
+        }
         GameObject clone = Instantiate(colorReference, colorContent);
         clone.GetComponent<RawImage>().color = color;
         clone.transform.GetChild(0).GetComponent<TMP_Text>().text = colorContent.childCount + "";
