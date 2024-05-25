@@ -86,6 +86,7 @@ public class Image : MonoBehaviour {
         });
 
         usingGrid = false;
+        CurrentNumber = 1;
     }
 
     public Vector2 GetPosition(Vector3 mousePos){ // turns a mouse position into a position on the image ( (0,0) is the top left )
@@ -111,7 +112,12 @@ public class Image : MonoBehaviour {
     }
 
     public bool IsDrawn(int x, int y){ // returns true if the selected pixel has been colored in
-        return solved[(int)(y * resolution.y + x)] == 1;
+        int index = (int)(y * resolution.y + x);
+        if (solved.Length < index){
+            return false;
+        }
+        
+        return solved[index] == 1;
     }
 
     public bool IsDrawn(Vector2 pos){
@@ -119,7 +125,12 @@ public class Image : MonoBehaviour {
     }
 
     public int GetNumber(int x, int y){ // returns the number of the selected pixel
-        return dataList[(int)(y * resolution.y + x)];
+        int index = (int)(y * resolution.y + x);
+        if (dataList.Count < index){
+            return -1;
+        }
+
+        return dataList[index];
     }
 
     public int GetNumber(Vector2 pos){
@@ -240,6 +251,7 @@ public class Image : MonoBehaviour {
         if (Input.GetMouseButton(0)){
             if (isDrawing){
                 Vector2 pos = GetPosition(Input.mousePosition);
+                Debug.Log(GetNumber(pos) + "a" + IsDrawn(pos));
                 if (GetNumber(pos) == currentNumber && !IsDrawn(pos)){
                     Place(pos);
                     RenderImage();
