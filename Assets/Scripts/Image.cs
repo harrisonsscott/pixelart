@@ -18,12 +18,21 @@ public class Image : MonoBehaviour {
     public Material imageMaterial;
 
     [Header("Data")]
-    public int currentNumber;
     public TextAsset textAsset; // json data
     public bool usingGrid;
     [SerializeField] List<int> dataList;
     [SerializeField] List<bool> transparentList;
     [SerializeField] List<Vector4> colorsList;
+    public int currentNumber;
+    public int CurrentNumber {
+        get {
+            return currentNumber;
+        }
+        set {
+            imageMaterial.SetFloat("_NumSelected", value);
+            currentNumber = value;
+        }
+    }
 
     [Header("Textures")]
     public RenderTexture overlayTarget;

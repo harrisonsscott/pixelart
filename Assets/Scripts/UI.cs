@@ -12,6 +12,7 @@ public class UI : MonoBehaviour
     public Transform bottom; // bottom of the UI where you can select the colors
     public Transform colorContent; // where all the colorReference clones are placed
     public List<Color> colorList; // list of all the current colors
+    public Image image;
 
     void Awake()
     {
@@ -49,11 +50,12 @@ public class UI : MonoBehaviour
         clone.GetComponent<RawImage>().color = color;
         clone.transform.GetChild(0).GetComponent<TMP_Text>().text = colorContent.childCount + "";
 
-        int index = colorContent.childCount - 1;
+        int index = colorContent.childCount;
 
         // change the color indicator's color when clicked
         clone.GetComponent<Button>().onClick.AddListener(() => {
-            colorIndicator.GetComponent<RawImage>().color = colorList[index];
+            colorIndicator.GetComponent<RawImage>().color = colorList[index-1];
+            image.CurrentNumber = index;
         });
     }
 
