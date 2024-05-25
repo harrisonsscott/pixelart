@@ -102,7 +102,6 @@ public class Image : MonoBehaviour {
     }
 
     public bool IsDrawn(int x, int y){ // returns true if the selected pixel has been colored in
-        Debug.Log(dataList[(int)(y * resolution.y + x)]);
         return solved[(int)(y * resolution.y + x)] == 1;
     }
 
@@ -172,7 +171,6 @@ public class Image : MonoBehaviour {
         target.Create();
         overlayTarget.Create();
 
-        Debug.Log(dataList);
         ComputeBuffer dataBuffer = new ComputeBuffer(1, sizeof(int) * dataList.Count);
         dataBuffer.SetData(dataList.ToArray());
 

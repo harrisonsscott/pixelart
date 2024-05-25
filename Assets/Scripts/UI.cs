@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
+using System.Collections.Generic;
 
 public class UI : MonoBehaviour
 {
@@ -10,9 +11,11 @@ public class UI : MonoBehaviour
     public GameObject colorIndicator; // thin strip that indicates the current color
     public Transform bottom; // bottom of the UI where you can select the colors
     public Transform colorContent; // where all the colorReference clones are placed
+    public List<Color> colorList; // list of all the current colors
 
     void Awake()
     {
+        colorList = new List<Color>();
         ClearColors();
     }
 
@@ -29,6 +32,7 @@ public class UI : MonoBehaviour
     }
 
     public void ClearColors(){ // removes all the children in colorContent
+        colorList = new List<Color>();
         for (int i = 0; i < colorContent.childCount; i++){
             Destroy(colorContent.GetChild(i).gameObject);
         }
@@ -38,9 +42,19 @@ public class UI : MonoBehaviour
         if (colorContent.childCount == 0){
             ChangeColor(color);
         }
+
+        colorList.Add(color);
+
         GameObject clone = Instantiate(colorReference, colorContent);
         clone.GetComponent<RawImage>().color = color;
         clone.transform.GetChild(0).GetComponent<TMP_Text>().text = colorContent.childCount + "";
+
+        int index = colorContent.childCount - 1;
+
+        // change the color indicator's color when clicked
+        clone.GetComponent<Button>().onClick.AddListener(() => {
+            colorIndicator.GetComponent<RawImage>().color = colorList[index];
+        });
     }
 
     public void PlaceColor(string hex){
