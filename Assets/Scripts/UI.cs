@@ -41,6 +41,7 @@ public class UI : MonoBehaviour
     }
 
     public void PlaceColor(Color color){ // clones colorReference and places it in colorContent
+        color.a = 1;
         if (colorContent.childCount == 0){
             ChangeColor(color);
         }

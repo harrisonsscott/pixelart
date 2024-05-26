@@ -75,12 +75,6 @@ int main(int argc, char *argv[]){
             }
 
             if (similarity >= threshold){
-                int pos = palette.size() * 4;
-
-                j["keys"][pos] = color[2] / 255.0;
-                j["keys"][pos + 1] = color[1] / 255.0;
-                j["keys"][pos + 2] = color[0] / 255.0;
-                j["keys"][pos + 3] = color[3] / 255.0;
                 palette.push_back(color);
 
                 // shader can only render numbers up to 99
@@ -133,6 +127,7 @@ int main(int argc, char *argv[]){
 
     for (int i = 0; i < amount.size(); i++){
         if (amount[i] == 0){
+            palette.erase(palette.begin() + i);
             for (int v = 0; v < seqIndex; v++){
                 int n = j["data"][v]["number"];
                 if (n >= i){
@@ -140,7 +135,16 @@ int main(int argc, char *argv[]){
                 }
             }
         }
-        cout << amount[i] << endl;
+    }
+
+    for (int i = 0; i < palette.size(); i++){
+        int pos = i * 4;
+        Vec4b& color = palette[i];
+
+        j["keys"][pos] = color[2] / 255.0;
+        j["keys"][pos + 1] = color[1] / 255.0;
+        j["keys"][pos + 2] = color[0] / 255.0;
+        j["keys"][pos + 3] = color[3] / 255.0;
     }
 
     cv::imwrite("out.png", im);

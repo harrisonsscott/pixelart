@@ -23,6 +23,9 @@ public class Main : MonoBehaviour {
     [SerializeField] List<int> dataList;
     [SerializeField] List<bool> transparentList;
     [SerializeField] List<Vector4> colorsList;
+    public List<int> amountList; // how many pixels of each color are in the image
+    public List<int> amountFilledList; // how many pixels of each color have been filled in
+
     public int currentNumber;
     public int CurrentNumber {
         get {
@@ -150,6 +153,15 @@ public class Main : MonoBehaviour {
             dataList.AddRange(data.data[i].Decompress());
         }
 
+        // calculate how many pixels of each color there are
+        for (int i = 0; i < dataList.Count; i++){
+            int index = dataList[i];
+            while (amountList.Count <= index){
+                amountList.Add(0);
+            }
+            amountList[index]++;
+        }
+
         // extract the colors (ignores the transparent color)
         for (int i = 4; i < data.keys.Length; i+=4){
             Vector4 col = new Vector4(0,0,0,0);
@@ -158,9 +170,10 @@ public class Main : MonoBehaviour {
                 col[v] = data.keys[i + v];
             }        
 
-            if (col[3] > 0.1){
+            if (col[3] > 0){
                 colorsList.Add(col);
                 classUI.PlaceColor(col);
+                amountFilledList.Add(0);
             }
         }
 
