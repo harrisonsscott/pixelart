@@ -80,7 +80,9 @@ public class Image : MonoBehaviour {
 
         button.onClick.AddListener(() => {
             Vector2 pos = GetPosition(Input.mousePosition);
-            Place(pos);
+            if (GetNumber(pos) == CurrentNumber){
+                Place(pos);
+            }
             RenderImage();
             // Raycast();
         });
@@ -251,7 +253,6 @@ public class Image : MonoBehaviour {
         if (Input.GetMouseButton(0)){
             if (isDrawing){
                 Vector2 pos = GetPosition(Input.mousePosition);
-                Debug.Log(GetNumber(pos) + "a" + IsDrawn(pos));
                 if (GetNumber(pos) == currentNumber && !IsDrawn(pos)){
                     Place(pos);
                     RenderImage();
