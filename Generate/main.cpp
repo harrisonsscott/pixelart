@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cmath>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include "json.hpp"
@@ -41,7 +42,6 @@ int main(int argc, char *argv[]){
     json j;
     ofstream jsonFile(argv[2]);
 
-
     if (!jsonFile.is_open()){
         cout << "Error opening file " << argv[2] << endl;
         return -1;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]){
                 }
             }
 
-            if (similarity > threshold){
+            if (similarity >= threshold){
                 int pos = palette.size() * 4;
 
                 j["keys"][pos] = color[2] / 255.0;
@@ -88,15 +88,18 @@ int main(int argc, char *argv[]){
                 }
             }
 
-            if (index == prevNum){
+
+            if (index == prevNum || seq < 2){
                 seqNumber = index;
                 seq++;
             } else {
                 j["data"][seqIndex]["number"] = seqNumber; // number
                 j["data"][seqIndex]["length"] = seq; // amount of sequential numbers
+                
                 seqIndex++;
                 seq = 1;
                 seqNumber = index;
+
             }
 
             // uncompressed form
