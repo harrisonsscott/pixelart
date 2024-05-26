@@ -12,7 +12,7 @@ public class UI : MonoBehaviour
     public Transform bottom; // bottom of the UI where you can select the colors
     public Transform colorContent; // where all the colorReference clones are placed
     public List<Color> colorList; // list of all the current colors
-    public Image image;
+    public Main main;
 
     void Awake()
     {
@@ -55,7 +55,7 @@ public class UI : MonoBehaviour
         // change the color indicator's color when clicked
         clone.GetComponent<Button>().onClick.AddListener(() => {
             colorIndicator.GetComponent<RawImage>().color = colorList[index-1];
-            image.CurrentNumber = index;
+            main.CurrentNumber = index;
         });
     }
 
