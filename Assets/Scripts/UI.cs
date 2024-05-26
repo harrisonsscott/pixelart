@@ -12,6 +12,7 @@ public class UI : MonoBehaviour
     public Transform bottom; // bottom of the UI where you can select the colors
     public Transform colorContent; // where all the colorReference clones are placed
     public List<Color> colorList; // list of all the current colors
+    public List<GameObject> colorGOList; // list of all the current color gameObjects
     public Main main;
 
     void Awake()
@@ -49,13 +50,23 @@ public class UI : MonoBehaviour
         GameObject clone = Instantiate(colorReference, colorContent);
         clone.GetComponent<RawImage>().color = color;
         clone.transform.GetChild(0).GetComponent<TMP_Text>().text = colorContent.childCount + "";
+        clone.transform.Find("Progress").gameObject.SetActive(false);
+
+        colorGOList.Add(clone);
 
         int index = colorContent.childCount;
 
-        // change the color indicator's color when clicked
         clone.GetComponent<Button>().onClick.AddListener(() => {
+            // change the color indicator's color 
             colorIndicator.GetComponent<RawImage>().color = colorList[index-1];
             main.CurrentNumber = index;
+
+            //show the progress bar when clicked
+            foreach(GameObject element in colorGOList){
+                element.transform.Find("Progress").gameObject.SetActive(false);
+            }
+
+            clone.transform.Find("Progress").gameObject.SetActive(true);
         });
     }
 
