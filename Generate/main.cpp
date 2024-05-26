@@ -39,6 +39,7 @@ int main(int argc, char *argv[]){
 
     Mat im;
     vector<Vec4b> palette; 
+    vector<int> amount;
     json j;
     ofstream jsonFile(argv[2]);
 
@@ -53,6 +54,7 @@ int main(int argc, char *argv[]){
     int seqNumber = 0;
     int seqIndex = 0;
     int prevNum = 0;
+
 
     for (int x = 0; x < size.width; x++){
         for (int y = 0; y < size.height; y++){
@@ -89,13 +91,19 @@ int main(int argc, char *argv[]){
             }
 
 
-            if (index == prevNum || seq < 2){
+            if (index == prevNum){
                 seqNumber = index;
                 seq++;
             } else {
                 j["data"][seqIndex]["number"] = seqNumber; // number
                 j["data"][seqIndex]["length"] = seq; // amount of sequential numbers
                 
+                while (amount.size() <= seqNumber){
+                    amount.push_back(0);
+                }
+
+                amount[seqNumber] += seq;
+
                 seqIndex++;
                 seq = 1;
                 seqNumber = index;
@@ -122,6 +130,18 @@ int main(int argc, char *argv[]){
 
     j["size"][0] = size.width;
     j["size"][1] = size.height;
+
+    for (int i = 0; i < amount.size(); i++){
+        if (amount[i] == 0){
+            for (int v = 0; v < seqIndex; v++){
+                int n = j["data"][v]["number"];
+                if (n >= i){
+                    j["data"][v]["number"] = n - 1;
+                }
+            }
+        }
+        cout << amount[i] << endl;
+    }
 
     cv::imwrite("out.png", im);
 

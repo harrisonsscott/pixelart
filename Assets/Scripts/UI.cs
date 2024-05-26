@@ -50,7 +50,12 @@ public class UI : MonoBehaviour
         GameObject clone = Instantiate(colorReference, colorContent);
         clone.GetComponent<RawImage>().color = color;
         clone.transform.GetChild(0).GetComponent<TMP_Text>().text = colorContent.childCount + "";
-        clone.transform.Find("Progress").gameObject.SetActive(false);
+        
+        GameObject progress = clone.transform.Find("Progress").gameObject;
+        GameObject progressBack = clone.transform.Find("ProgressBack").gameObject;
+
+        progressBack.SetActive(false);
+        progress.SetActive(false);
 
         colorGOList.Add(clone);
 
@@ -63,10 +68,13 @@ public class UI : MonoBehaviour
 
             //show the progress bar when clicked
             foreach(GameObject element in colorGOList){
+                element.transform.Find("ProgressBack").gameObject.SetActive(false);
                 element.transform.Find("Progress").gameObject.SetActive(false);
             }
 
-            clone.transform.Find("Progress").gameObject.SetActive(true);
+            progressBack.SetActive(true);
+            progress.SetActive(true);
+            progress.transform.GetChild(0).GetComponent<Image>().color = colorList[index-1];
         });
     }
 
