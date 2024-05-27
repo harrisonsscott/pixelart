@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
 using System.Collections.Generic;
 
 public class UI : MonoBehaviour
@@ -40,6 +39,26 @@ public class UI : MonoBehaviour
         }
     }
 
+    public void SelectColor(int index){
+        GameObject color = colorGOList[index-1];
+        GameObject progress = color.transform.Find("Progress").gameObject;
+        GameObject progressBack = color.transform.Find("ProgressBack").gameObject;
+
+        // change the color indicator's color 
+        colorIndicator.GetComponent<RawImage>().color = colorList[index-1];
+        main.CurrentNumber = index;
+
+            //show the progress bar when clicked
+        foreach(GameObject element in colorGOList){
+            element.transform.Find("ProgressBack").gameObject.SetActive(false);
+            element.transform.Find("Progress").gameObject.SetActive(false);
+        }
+
+        progressBack.SetActive(true);
+        progress.SetActive(true);
+        progress.transform.GetChild(0).GetComponent<Image>().color = colorList[index-1];
+    }
+
     public void PlaceColor(Color color){ // clones colorReference and places it in colorContent
         color.a = 1;
         if (colorContent.childCount == 0){
@@ -63,19 +82,7 @@ public class UI : MonoBehaviour
         int index = colorContent.childCount;
 
         clone.GetComponent<Button>().onClick.AddListener(() => {
-            // change the color indicator's color 
-            colorIndicator.GetComponent<RawImage>().color = colorList[index-1];
-            main.CurrentNumber = index;
-
-            //show the progress bar when clicked
-            foreach(GameObject element in colorGOList){
-                element.transform.Find("ProgressBack").gameObject.SetActive(false);
-                element.transform.Find("Progress").gameObject.SetActive(false);
-            }
-
-            progressBack.SetActive(true);
-            progress.SetActive(true);
-            progress.transform.GetChild(0).GetComponent<Image>().color = colorList[index-1];
+            SelectColor(index);
         });
     }
 
