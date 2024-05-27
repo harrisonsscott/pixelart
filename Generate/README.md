@@ -11,4 +11,6 @@ the corresponding palette color to json.
 Run with
 ./pixelArt [Image] [Output] [Size X] [Size Y] [Threshold]
 
+Instead of inputting a number for [Size Y], you can just put "x" instead, which would keep the aspect ratio of the original image.
+
 Where Size X and Y is the size of the outputted image, and threshold is the similarity between palette colors

@@ -29,11 +29,21 @@ int main(int argc, char *argv[]){
         return -1;
     }
 
-    Size size = Size(atoi(argv[3]), atoi(argv[4]));
-    if (size.area() < 0){
-        cout << "Invalid dimensions!" << endl;
-        return -1;
+    Size size = Size(atoi(argv[3]), 0);
+
+    cout << argv[4] << endl;
+
+    if (argv[4][0] == 'x'){
+        size.height = (int)(atoi(argv[3]) * (image.size().height / (float)image.size().width));
+        cout << size << endl;
+    } else {
+        size.height = atoi(argv[4]);
+        if (size.area() < 0){
+            cout << "Invalid dimensions!" << endl;
+            return -1;
+        }
     }
+
 
     int threshold = atoi(argv[5]);
 
