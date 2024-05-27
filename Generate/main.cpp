@@ -23,15 +23,17 @@ int main(int argc, char *argv[]){
         return -1;
     }
 
-    Mat image = imread(argv[1], IMREAD_UNCHANGED);
-    if (image.empty()){
+    Mat image0 = imread(argv[1], IMREAD_UNCHANGED);
+    if (image0.empty()){
         cout << "Error loading image " << argv[1] << endl;
         return -1;
     }
 
+    int width = max(image0.cols, image0.rows);
+    
+    Mat image = Mat::zeros(width, width, image0.type());
+    
     Size size = Size(atoi(argv[3]), 0);
-
-    cout << argv[4] << endl;
 
     if (argv[4][0] == 'x'){
         size.height = (int)(atoi(argv[3]) * (image.size().height / (float)image.size().width));
@@ -44,6 +46,10 @@ int main(int argc, char *argv[]){
         }
     }
 
+    Rect roi(Point(0, 0), image0.size());
+    image0.copyTo(image(roi));
+
+    cout << argv[4] << endl;
 
     int threshold = atoi(argv[5]);
 
