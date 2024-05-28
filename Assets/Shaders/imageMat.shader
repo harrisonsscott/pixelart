@@ -5,7 +5,7 @@ Shader "Unlit/imageMat"
         _MainTex ("Texture", 2D) = "white" {}
         _Overlay ("Overlay Texture", 2D) = "white" {}
         _Overlay2 ("Overlay Texture", 2D) = "white" {} 
-        _GridSize ("Grid Size", Float) = (1, 1, 1, 1)
+        _GridSize ("Grid Size", Vector) = (1, 1, 1, 1)
         _Thickness ("Grid Thickness", Float) = 0.1
         _Grid ("Render Grid", Float) = 0 // boolean
         

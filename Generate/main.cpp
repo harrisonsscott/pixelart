@@ -23,37 +23,41 @@ int main(int argc, char *argv[]){
         return -1;
     }
 
-    Mat image0 = imread(argv[1], IMREAD_UNCHANGED);
-    if (image0.empty()){
+    Mat image = imread(argv[1], IMREAD_UNCHANGED);
+    if (image.empty()){
         cout << "Error loading image " << argv[1] << endl;
         return -1;
     }
 
-    int width = max(image0.cols, image0.rows);
-    
-    Mat image = Mat::zeros(width, width, image0.type());
-    
-    Size size = Size(atoi(argv[3]), 0);
+    Size size = Size(atoi(argv[3]), atoi(argv[4]));
 
     if (argv[4][0] == 'x'){
         size.height = (int)(atoi(argv[3]) * (image.size().height / (float)image.size().width));
-        cout << size << endl;
-    } else {
-        size.height = atoi(argv[4]);
-        if (size.area() < 0){
-            cout << "Invalid dimensions!" << endl;
-            return -1;
-        }
     }
 
-    Rect roi(Point(0, 0), image0.size());
-    image0.copyTo(image(roi));
+    if (size.area() < 0){
+        cout << "Invalid dimensions!" << endl;
+        return -1;
+    }
 
-    cout << argv[4] << endl;
+    int width = max(size.width, size.height);
+
+    Mat im0;
+    Mat im = Mat::zeros(width, width, image.type());
+    resize(image, im0, size);
+    
+    size = Size(width,width);
+
+    Rect roi(Point(0,0), im0.size());
+    im0.copyTo(im(roi));
+
+    imwrite("a.png", im0);
+    imwrite("b.png", im);
+
+    // return 0;
 
     int threshold = atoi(argv[5]);
 
-    Mat im;
     vector<Vec4b> palette; 
     vector<int> amount;
     json j;
@@ -63,8 +67,6 @@ int main(int argc, char *argv[]){
         cout << "Error opening file " << argv[2] << endl;
         return -1;
     }
-
-    resize(image, im, size);
 
     int seq = 1; // amount of sequential numbers (for compression)
     int seqNumber = 0;

@@ -109,6 +109,7 @@ public class Main : MonoBehaviour {
 
     public void Place(int x, int y){
         solved[(int)(y * resolution.y + x)] = 1;
+        RenderImage();
     }
 
     public void Place(Vector2 pos){
@@ -235,7 +236,7 @@ public class Main : MonoBehaviour {
         // material.mainTexture = target;
         imageMaterial.SetTexture("_MainTex", target);
         imageMaterial.SetTexture("_Overlay", overlayTarget);
-        imageMaterial.SetFloatArray("_GridSize", resolution.ToArray());
+        imageMaterial.SetVector("_GridSize", resolution);
         imageMaterial.SetTexture("_TextData", textTarget);
         imageMaterial.SetFloat("_Grid", usingGrid == true ? 1 : 0);
 
@@ -267,7 +268,6 @@ public class Main : MonoBehaviour {
                 Vector2 pos = GetPosition(Input.mousePosition);
                 if (GetNumber(pos) == currentNumber && !IsDrawn(pos)){
                     Place(pos);
-                    RenderImage();
                     return;
                 }
             } else {
