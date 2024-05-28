@@ -29,6 +29,6 @@ public class ImageData
 public class Data : MonoBehaviour
 {
     private void Start() {
-        Load.LoadJson(4, SortMode.Random);
+        Load.LoadJson(3, SortMode.Random);
     }
 }

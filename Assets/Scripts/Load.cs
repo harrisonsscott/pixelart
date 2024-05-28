@@ -11,7 +11,7 @@ public static class Load
     public static string LoadJson(string name)
     {
         if (textAssets == null){
-            textAssets = Resources.LoadAll<TextAsset>("").ToList();
+            textAssets = Resources.LoadAll<TextAsset>("data").ToList();
         }
 
         TextAsset textAsset = Resources.Load<TextAsset>(name);
@@ -20,14 +20,8 @@ public static class Load
 
     public static List<string> LoadJson(int amount, SortMode sortMode){
         if (textAssets == null){
-            textAssets = Resources.LoadAll<TextAsset>("").ToList();
-
-            foreach(var t in textAssets){
-                Debug.Log("a - " + t);
-            }
+            textAssets = Resources.LoadAll<TextAsset>("data").ToList();
         }
-
-        Debug.Log(amount + " - " + textAssets.Count);
         
         if (amount > textAssets.Count){
             Debug.LogError("Count exceeds array size!");
