@@ -96,17 +96,14 @@ public static class Extensions {
     }
 
     public static List<T> Flip <T>(this List<T> list){
-        int left = 0;
-        int right = list.Count - 1;
-
-        while (left < right)
+        int length = list.Count;
+        int middle = length / 2;
+        for (int i = 0; i < middle; i++)
         {
-            T temp = list[left];
-            list[left] = list[right];
-            list[right] = temp;
-
-            left++;
-            right--;
+            int j = length - 1 - i;
+            T temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
         }
 
         return list;
