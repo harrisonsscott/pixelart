@@ -20,6 +20,7 @@ public class CompressedData {
 [System.Serializable]
 public class ImageData
 {
+    public string name;
     public CompressedData[] data;
     public float[] keys;
     public int[] size;
@@ -29,6 +30,6 @@ public class ImageData
 public class Data : MonoBehaviour
 {
     private void Start() {
-        Load.LoadJson(3, SortMode.Random);
+        Load.LoadJson(1, SortMode.Random);
     }
 }

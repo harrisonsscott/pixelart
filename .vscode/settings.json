@@ -65,6 +65,8 @@
         "variant": "cpp",
         "iostream": "cpp",
         "stop_token": "cpp",
-        "new": "cpp"
+        "new": "cpp",
+        "string": "cpp",
+        "string_view": "cpp"
     }
 }
