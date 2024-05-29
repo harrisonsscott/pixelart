@@ -51,8 +51,6 @@ int main(int argc, char *argv[]){
     Rect roi(Point(0,0), im0.size());
     im0.copyTo(im(roi));
 
-    imwrite("a.png", im0);
-    imwrite("b.png", im);
 
     // return 0;
 
@@ -67,6 +65,24 @@ int main(int argc, char *argv[]){
         cout << "Error opening file " << argv[2] << endl;
         return -1;
     }
+
+    string name = argv[2];
+
+    size_t slashPos = name.find_last_of('/');
+    size_t dotPos = name.find_last_of('.');
+
+    string lastElement;
+    if (slashPos != string::npos && dotPos != string::npos) {
+        name = name.substr(slashPos + 1, dotPos - slashPos - 1);
+    } else if (slashPos != string::npos) {
+        name = name.substr(slashPos + 1);
+    } else if (dotPos != string::npos) {
+        name = name.substr(0, dotPos);
+    } else {
+        name = name;
+    }
+
+    j["name"] = name;
 
     int seq = 1; // amount of sequential numbers (for compression)
     int seqNumber = 0;
@@ -165,7 +181,7 @@ int main(int argc, char *argv[]){
         j["keys"][pos + 3] = color[3] / 255.0;
     }
 
-    cv::imwrite("out.png", im);
+    // cv::imwrite("out.png", im);
 
     jsonFile << j.dump();
 
