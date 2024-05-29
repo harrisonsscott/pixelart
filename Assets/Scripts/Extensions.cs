@@ -94,4 +94,21 @@ public static class Extensions {
 
         return floatList;
     }
+
+    public static List<T> Flip <T>(this List<T> list){
+        int left = 0;
+        int right = list.Count - 1;
+
+        while (left < right)
+        {
+            T temp = list[left];
+            list[left] = list[right];
+            list[right] = temp;
+
+            left++;
+            right--;
+        }
+
+        return list;
+    }
 }
