@@ -39,6 +39,14 @@ public class UI : MonoBehaviour
         }
     }
 
+    // changes the amount of progress on a certain color
+    public void ChangeProgress(int index, float amount){
+        GameObject color = colorGOList[index-1];
+        GameObject progress = color.transform.Find("Progress").gameObject;
+
+        progress.GetComponent<ProgressBar>().progress = amount;
+    }
+
     public void SelectColor(int index){
         GameObject color = colorGOList[index-1];
         GameObject progress = color.transform.Find("Progress").gameObject;

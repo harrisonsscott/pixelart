@@ -7,7 +7,7 @@ public class ProgressBar : MonoBehaviour
 {
     private Vector2 size;
     private RectTransform amount; // rect transform of the child
-    private float prog; // from 0 to 1
+    [SerializeField] float prog; // from 0 to 1
     public float progress {
         get {
             return prog;

@@ -109,6 +109,7 @@ public class Main : MonoBehaviour {
 
     public void Place(int x, int y){
         if (!IsDrawn(x, y)){
+            classUI.ChangeProgress(currentNumber, 1f-(float)(amountFilledList[currentNumber]+1)/amountList[currentNumber]);
             amountFilledList[currentNumber] += 1;
         }
         solved[(int)(y * resolution.y + x)] = 1;
@@ -162,6 +163,7 @@ public class Main : MonoBehaviour {
             int index = dataList[i];
             while (amountList.Count <= index){
                 amountList.Add(0);
+                amountFilledList.Add(0);
             }
             amountList[index]++;
         }
@@ -177,7 +179,6 @@ public class Main : MonoBehaviour {
             if (col[3] > 0){
                 colorsList.Add(col);
                 classUI.PlaceColor(col);
-                amountFilledList.Add(0);
             }
         }
 
