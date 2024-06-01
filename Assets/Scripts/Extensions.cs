@@ -71,17 +71,7 @@ public static class Extensions {
         return new float[3]{vec.x, vec.y, vec.z};
     }
 
-    // other
-
-    public static int ToInt(this string str){ // converts a string into an int
-        int num;
-        int.TryParse(str, out num);
-        return num;
-    }
-
-    public static bool HasComponent <T>(this GameObject obj) where T:Component{
-        return obj.GetComponent<T>() != null;
-    }
+    // lists
 
     public static List<float> ToFloat(this List<int> list){
         List<float> floatList = new List<float>(list.Count);
@@ -108,4 +98,31 @@ public static class Extensions {
 
         return list;
     }
+
+    public static float Sum(this List<float> list){
+        float sum = 0;
+
+        foreach (float element in list){
+            sum += element;
+        }
+
+        return sum;
+    }
+
+    public static int Sum(this List<int> list){
+        return (int)Sum(list.ToFloat());
+    }
+
+    // other
+
+    public static int ToInt(this string str){ // converts a string into an int
+        int num;
+        int.TryParse(str, out num);
+        return num;
+    }
+
+    public static bool HasComponent <T>(this GameObject obj) where T:Component{
+        return obj.GetComponent<T>() != null;
+    }
+
 }
