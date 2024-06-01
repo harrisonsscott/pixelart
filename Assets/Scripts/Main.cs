@@ -108,6 +108,9 @@ public class Main : MonoBehaviour {
     }
 
     public void Place(int x, int y){
+        if (!IsDrawn(x, y)){
+            amountFilledList[currentNumber] += 1;
+        }
         solved[(int)(y * resolution.y + x)] = 1;
         RenderImage();
     }
