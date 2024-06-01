@@ -14,7 +14,7 @@ public class ProgressBar : MonoBehaviour
         }
         set {
             prog = Mathf.Clamp(value, 0, 1);
-            amount.offsetMax = new Vector2(-prog*size.x, 0);
+            amount.offsetMax = new Vector2(-size.x+prog*size.x, 0);
         }
     }
     private Color col;
@@ -28,12 +28,11 @@ public class ProgressBar : MonoBehaviour
         }
     }
 
-    void Start()
+    void Awake()
     {
         amount = transform.GetChild(0).GetComponent<RectTransform>();
         size = gameObject.GetComponent<RectTransform>().sizeDelta;
-        color = "#ff7700".ToRGB();
 
-        progress = 0.5f;
+        progress = 0f;
     }
 }

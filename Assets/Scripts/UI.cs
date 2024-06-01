@@ -82,6 +82,9 @@ public class UI : MonoBehaviour
         GameObject progress = clone.transform.Find("Progress").gameObject;
         GameObject progressBack = clone.transform.Find("ProgressBack").gameObject;
 
+        progress.transform.GetChild(0).GetComponent<Image>().color = color;
+        progress.GetComponent<ProgressBar>().progress = 0f;
+
         progressBack.SetActive(false);
         progress.SetActive(false);
 

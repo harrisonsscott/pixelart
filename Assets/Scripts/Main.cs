@@ -109,7 +109,7 @@ public class Main : MonoBehaviour {
 
     public void Place(int x, int y){
         if (!IsDrawn(x, y)){
-            classUI.ChangeProgress(currentNumber, 1f-(float)(amountFilledList[currentNumber]+1)/amountList[currentNumber]);
+            classUI.ChangeProgress(currentNumber, (float)(amountFilledList[currentNumber]+1)/amountList[currentNumber]);
             amountFilledList[currentNumber] += 1;
         }
         solved[(int)(y * resolution.y + x)] = 1;
