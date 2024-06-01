@@ -12,7 +12,12 @@ public class ProgressBar : MonoBehaviour
         }
         set {
             prog = Mathf.Clamp(value, 0, 1);
-            amount.offsetMax = new Vector2(-size.x+prog*size.x, 0);
+
+            float a = amount.offsetMax.x;
+            
+            LeanTween.value(0, 1, 0.1f).setOnUpdate((float t) => {
+                amount.offsetMax = new Vector2( Mathf.Lerp(a, -size.x+prog*size.x, t), 0);
+            });
         }
     }
     private Color col;
