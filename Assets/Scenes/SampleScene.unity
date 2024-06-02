@@ -1796,6 +1796,7 @@ GameObject:
   - component: {fileID: 2046270030}
   - component: {fileID: 2046270029}
   - component: {fileID: 2046270028}
+  - component: {fileID: 2046270031}
   m_Layer: 5
   m_Name: Progress
   m_TagString: Untagged
@@ -1818,10 +1819,10 @@ RectTransform:
   - {fileID: 1076513867}
   m_Father: {fileID: 277235234}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -48}
-  m_SizeDelta: {x: -50.0528, y: -142.3564}
+  m_SizeDelta: {x: 109.947205, y: 17.6436}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2046270028
 MonoBehaviour:
@@ -1874,6 +1875,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2046270026}
   m_CullTransparentMesh: 1
+--- !u!114 &2046270031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046270026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf78662edc8a98e0ca1b03916c5507a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prog: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -182,6 +182,7 @@ public class Main : MonoBehaviour {
             }
         }
 
+        classUI.SelectColor(1); // select the first color automatically
     }
 
 
