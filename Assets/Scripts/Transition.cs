@@ -1,13 +1,24 @@
 using UnityEngine;
 
 public static class Transition {
-    public static void Move(GameObject from, GameObject to, Direction direction=Direction.Left){ // moves an element off the screen and moves another into its place
-        RectTransform fromRect = from.GetComponent<RectTransform>();
-        RectTransform toRect = to.GetComponent<RectTransform>();
+    public static void Move(GameObject oldPanel, GameObject newPanel, Direction direction=Direction.Left){ // moves an element off the screen and moves another into its place
+        RectTransform rectOld = oldPanel.GetComponent<RectTransform>();
+        RectTransform rectNew = newPanel.GetComponent<RectTransform>();
 
-        Vector2 targetPos = fromRect.localPosition;
+        Vector2 oldPos = Vector2.zero; // where the old panel moves to
+        Vector2 newPos = Vector2.zero; // where the new panels starts out
 
-        LeanTween.moveLocal(to, targetPos, 1);
+        switch (direction){
+            case Direction.Up:
+                oldPos = new Vector2(rectOld.localPosition.x, Screen.height);
+                newPos = oldPos * new Vector2(1, -1);
+                break;
+        }
+
+        rectNew.localPosition = newPos;
+
+        LeanTween.moveLocal(newPanel, rectOld.localPosition, 5);
+        LeanTween.moveLocal(oldPanel, oldPos, 5);
     }
 }
 
