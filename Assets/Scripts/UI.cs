@@ -14,14 +14,9 @@ public class UI : MonoBehaviour
     public List<GameObject> colorGOList; // list of all the current color gameObjects
     public Main main;
 
-    public GameObject t1;
-    public GameObject t2;
-    public Direction dir;
-
 
     void Awake()
     {
-        Transition.Move(t1, t2, dir, LeanTweenType.easeOutQuad);
         colorList = new List<Color>();
         ClearColors();
     }
