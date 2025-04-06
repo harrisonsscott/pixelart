@@ -54,6 +54,8 @@ public class Main : MonoBehaviour {
     public Vector2 size;
     public Vector3 dragStart;
     public RaycastHit hit;
+    public Vector3 initialDiff; // difference between two fingers while pinching
+    public float initialZoom;
 
     [Header("Raycasting")]
     public GraphicRaycaster mainCanvasGR;
@@ -258,25 +260,25 @@ public class Main : MonoBehaviour {
 
     private void Pan(){
         if (Input.GetMouseButtonDown(0)){
-            Vector2 pos = GetPosition(Input.mousePosition);
+            Vector2 pos = GetPosition(Input.GetTouch(0).position);
             if (GetNumber(pos) == currentNumber && !IsDrawn(pos)){
                 isDrawing = true;
                 return;
             } else {
                 isDrawing = false;
             }
-            dragStart = cam.ScreenToWorldPoint(Input.mousePosition);
+            dragStart = cam.ScreenToWorldPoint(Input.GetTouch(0).position);
         }
 
         if (Input.GetMouseButton(0)){
             if (isDrawing){
-                Vector2 pos = GetPosition(Input.mousePosition);
+                Vector2 pos = GetPosition(Input.GetTouch(0).position);
                 if (GetNumber(pos) == currentNumber && !IsDrawn(pos)){
                     Place(pos);
                     return;
                 }
             } else {
-                Vector3 difference = dragStart - cam.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 difference = dragStart - cam.ScreenToWorldPoint(Input.GetTouch(0).position);
                 Vector2 size = new Vector2(originalZoom * (Screen.width/(float)Screen.height), originalZoom);
 
             
@@ -288,15 +290,27 @@ public class Main : MonoBehaviour {
     }
 
     private void Zoom(){
-        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - Input.mouseScrollDelta.y, 1, 20);
+        if (Input.touchCount >= 2){
+            if (initialDiff == Vector3.zero){
+                initialDiff = Input.GetTouch(1).position - Input.GetTouch(0).position;
+                initialZoom = cam.orthographicSize;
+            }
+            Vector3 currentZoomDiff = Input.GetTouch(1).position - Input.GetTouch(0).position;
+            float zoomDiff = currentZoomDiff.magnitude - initialDiff.magnitude;
+            Debug.Log(zoomDiff);
+            cam.orthographicSize = Mathf.Clamp(initialZoom - zoomDiff/256f, 1, 20);
 
-        if (cam.orthographicSize < (originalZoom - 1) && !usingGrid){
-            usingGrid = true;
-            RenderImage();
-        } else if (cam.orthographicSize > originalZoom && usingGrid){
-            usingGrid = false;
-            RenderImage();
+            if (cam.orthographicSize < (originalZoom - 1) && !usingGrid){
+                usingGrid = true;
+                RenderImage();
+            } else if (cam.orthographicSize > originalZoom && usingGrid){
+                usingGrid = false;
+                RenderImage();
+            }
+        } else {
+            initialDiff = Vector3.zero;
         }
+
     }
 
     private void Update() {
