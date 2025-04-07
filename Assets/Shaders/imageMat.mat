@@ -93,7 +93,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Grid: 1
+    - _Grid: 0
     - _LengthData: 1
     - _NumIndex: 6.26
     - _NumSelected: 1
@@ -103,6 +103,6 @@ Material:
     - _Thickness: 0.04
     - _isBending: 0
     m_Colors:
-    - _GridSize: {r: 32, g: 32, b: 0, a: 0}
+    - _GridSize: {r: 8, g: 8, b: 0, a: 0}
     - _NumberData: {r: 1, g: 2, b: 3, a: 4}
   m_BuildTextureStacks: []
