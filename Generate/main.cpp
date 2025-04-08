@@ -11,6 +11,7 @@ using json = nlohmann::json;
 
 int main(int argc, char *argv[]){
     const Size maxSize(256, 256); // the maximum size an output image can be (recommended to be 256x256)
+    ushort x, y;
 
     if (argc < 5){
         cout << "./pixelArt [Image] [Output] [Size X] [Size Y] [Threshold]" << endl;
@@ -54,16 +55,22 @@ int main(int argc, char *argv[]){
         size = Size(sideLength, sideLength);
     }
 
+    // resize the image
+    Mat im = Mat::zeros(size, image.type());
+    resize(image, im, size, INTER_AREA);
+    imwrite("resized.png", im);
 
+    for (int i = 0; i < size.area(); i++){
+        x = floor(i / size.height);
+        y = i % size.width;
 
-    for (int y = 0; y < 8; y++){
-        for (int x = 0; x < 8; x++){
-            Vec3b color = image.at<Vec3b>(Point(x, y));
-            Vec4b color2 = image.at<Vec4b>(Point(x, y));
-            // cout << color << " - " << color2 << endl;
-        }  
+        Vec3b color = image.at<Vec3b>(Point(x, y));
+        Vec4b color2 = image.at<Vec4b>(Point(x, y));
+        cout << color << " - " << color2 << endl;
     }
 
+    // cleaning up
+    image.release();
 
     return 0;
 }
