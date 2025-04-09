@@ -91,21 +91,57 @@ int main(int argc, char *argv[]){
         name = name;
     }
 
+    // adding metadata to the json
     j["name"] = name;
+    j["size"][0] = size.width;
+    j["size"][1] = size.height;
 
     // resize the image
     Mat im = Mat::zeros(size, image.type());
     resize(image, im, size, INTER_AREA);
-    imwrite("resized.png", im);
     
+    // loop over all the pixel to encode them to the json
+    uint sim; // how different the current pixel is from all the others (0 = identical to an existing color)
+    uint sim2; // temporary value for calculating similarity
+    Vec3b col3b; // temporary value for calculating color
+    Vec4b color; // color of the current pixel
+    Vec4b closestColor; // current color in the palette the current pixel is closest to
 
     for (int i = 0; i < size.area(); i++){
         x = floor(i / size.height);
         y = i % size.width;
+        sim = 1410065407; // start at an extremely high number and decrease to the smallest possible value
 
-        Vec3b color = image.at<Vec3b>(Point(x, y));
-        Vec4b color2 = image.at<Vec4b>(Point(x, y));
-        // cout << color << " - " << color2 << endl;
+        col3b = image.at<Vec3b>(Point(x, y)); // temporary value
+        color = Vec4b(col3b[0], col3b[1], col3b[2], 128);
+        closestColor = color;
+        
+        if (palette.size() == 0){
+            palette.push_back(color);
+        }
+
+        for (int v = 0; v < palette.size(); v++){
+            sim2 = getSimilarity(color, palette[i]);
+            if (sim2 <= sim){
+                sim = sim2; // set similarity to the new, smaller value
+                closestColor = palette[i];
+            }
+        }
+
+        // if the current pixel's color is different from all the other pixels, add it to the palette
+        if (sim >= threshold){
+            palette.push_back(color);
+        }
+        cout << "color probably " << closestColor << " - " << sim << " - ";
+        cout << color << " - " << image.at<Vec4b>(Point(x, y)) << endl;
+
+        im.at<Vec3b>(Point(x, y)) = col3b;
+    }
+
+    imwrite("resized.png", im);
+
+    for (int i = 0; i < palette.size(); i++){
+        cout << palette[i] << endl;
     }
 
     ofstream outputFile(argv[2]); // output file for the json
