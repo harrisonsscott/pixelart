@@ -17,6 +17,10 @@ float getSimilarity(Vec4b color1, Vec4b color2){
         0.1 * std::pow(color1[3] - color2[3], 2); // Adjust the weight for alpha
 }
 
+Vec3b Vec4bTo3b(Vec4b i){
+    return Vec3b(i[0], i[1], i[2]);
+}
+
 int main(int argc, char *argv[]){
     const Size maxSize(256, 256); // the maximum size an output image can be (recommended to be 256x256)
     ushort x, y;
@@ -113,18 +117,14 @@ int main(int argc, char *argv[]){
         sim = 1410065407; // start at an extremely high number and decrease to the smallest possible value
 
         col3b = image.at<Vec3b>(Point(x, y)); // temporary value
-        color = Vec4b(col3b[0], col3b[1], col3b[2], 128);
+        color = Vec4b(col3b[0], col3b[1], col3b[2], 255);
         closestColor = color;
-        
-        if (palette.size() == 0){
-            palette.push_back(color);
-        }
 
         for (int v = 0; v < palette.size(); v++){
-            sim2 = getSimilarity(color, palette[i]);
+            sim2 = getSimilarity(color, palette[v]);
             if (sim2 <= sim){
                 sim = sim2; // set similarity to the new, smaller value
-                closestColor = palette[i];
+                closestColor = palette[v];
             }
         }
 
@@ -132,10 +132,8 @@ int main(int argc, char *argv[]){
         if (sim >= threshold){
             palette.push_back(color);
         }
-        cout << "color probably " << closestColor << " - " << sim << " - ";
-        cout << color << " - " << image.at<Vec4b>(Point(x, y)) << endl;
 
-        im.at<Vec3b>(Point(x, y)) = col3b;
+        im.at<Vec3b>(Point(x, y)) = Vec4bTo3b(closestColor);
     }
 
     imwrite("resized.png", im);
