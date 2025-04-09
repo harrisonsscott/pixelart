@@ -112,6 +112,11 @@ int main(int argc, char *argv[]){
     Vec4b color; // color of the current pixel
     Vec4b closestColor; // current color in the palette the current pixel is closest to
     int closestIndex; // index of the closestColor in the palette
+    int prevIndex = 0; // used to compare the previous index with the current
+
+    int seq = 1; // amount of sequential numbers (for compression)
+    int seqNumber = 0;
+    int seqIndex = 0;
 
     for (int i = 0; i < size.area(); i++){
         x = floor(i / size.height);
@@ -124,7 +129,6 @@ int main(int argc, char *argv[]){
 
         if (i == 0){
             palette.push_back(color);
-            j["data"][0] = 0;
             continue;
         }
 
@@ -141,10 +145,33 @@ int main(int argc, char *argv[]){
         if (sim >= threshold){
             palette.push_back(color);
         }
+        
+        // compressing the data
+        // [0, 0, 0, 0, 0] -> [0, 5]
+        if (closestIndex == prevIndex){
+            seqNumber = closestIndex;
+            seq++;
+        } else {
+            j["data"][seqIndex]["number"] = seqNumber; // number
+            j["data"][seqIndex]["length"] = seq; // amount of sequential numbers
+            
+            while (amount.size() <= seqNumber){
+                amount.push_back(0);
+            }
 
-        j["data"][i] = closestIndex;
+            amount[seqNumber] += seq;
+
+            seqIndex++;
+            seq = 1;
+            seqNumber = closestIndex;
+
+        }
+
+        // j["data"][i] = closestIndex;
 
         im.at<Vec3b>(Point(x, y)) = Vec4bTo3b(closestColor);
+
+        prevIndex = closestIndex;
     }
 
     imwrite("resized.png", im);
