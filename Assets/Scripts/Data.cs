@@ -22,7 +22,8 @@ public class ImageData
 {
     public string name;
     public CompressedData[] data;
-    public float[] keys;
+    public string[] keys; // hex values
+    public float[] keysUnpacked;
     public int[] size;
     public int[] solved;
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using UnityEngine;
@@ -170,12 +171,31 @@ public class Main : MonoBehaviour {
             amountList[index]++;
         }
 
+        data.keysUnpacked = new float[data.keys.Length * 3];
+
+        // unpack the keys
+        for (int i = 0; i < data.keys.Length; i++){
+            string key = data.keys[i];
+            Debug.Log(key);
+            string r = key.Substring(0, 2);
+            string g = key.Substring(2, 2);
+            string b = key.Substring(4, 2);
+
+            int ri = Convert.ToInt16(r, 16);
+            int gi = Convert.ToInt16(g, 16);
+            int bi = Convert.ToInt16(b, 16);
+            Debug.Log(ri + " - " + gi + " - " + bi);
+            data.keysUnpacked[i * 3] = ri;
+            data.keysUnpacked[i * 3 + 1] = gi;
+            data.keysUnpacked[i * 3 + 2] = bi;
+        }
+
         // extract the colors (ignores the transparent color)
         for (int i = 4; i < data.keys.Length; i+=4){
             Vector4 col = new Vector4(0,0,0,0);
 
             for (int v = 0; v < 4; v++){
-                col[v] = data.keys[i + v];
+                col[v] = data.keysUnpacked[i + v];
             }        
 
             if (col[3] > 0){
@@ -216,8 +236,8 @@ public class Main : MonoBehaviour {
         ComputeBuffer dataBuffer = new ComputeBuffer(1, sizeof(int) * dataList.Count);
         dataBuffer.SetData(dataList.ToArray());
 
-        ComputeBuffer keyBuffer = new ComputeBuffer(1, sizeof(float) * data.keys.Length);
-        keyBuffer.SetData(data.keys);
+        ComputeBuffer keyBuffer = new ComputeBuffer(1, sizeof(float) * data.keysUnpacked.Length);
+        keyBuffer.SetData(data.keysUnpacked);
 
         ComputeBuffer finishedBuffer = new ComputeBuffer(1, sizeof(int) * data.solved.Length);
         finishedBuffer.SetData(solved);
