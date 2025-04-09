@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
     }
 
     // Load the image with 3 or 4 color channels
-    cv::Mat image = cv::imread(argv[1], cv::IMREAD_UNCHANGED);
+    cv::Mat image = cv::imread(argv[1], cv::IMREAD_COLOR);
     if (image.empty()){
         cout << "Error loading image " << argv[1] << endl;
         return -1;
@@ -119,8 +119,9 @@ int main(int argc, char *argv[]){
     int seqIndex = 0;
 
     for (int i = 0; i < size.area(); i++){
-        x = floor(i / size.height);
-        y = i % size.width;
+        j["solved"][i] = 0;
+        x = i % size.width;
+        y = floor(i / size.height);
         sim = 1410065407; // start at an extremely high number and decrease to the smallest possible value
 
         col3b = im.at<Vec3b>(Point(x, y)); // temporary value

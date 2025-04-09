@@ -171,7 +171,7 @@ public class Main : MonoBehaviour {
             amountList[index]++;
         }
 
-        data.keysUnpacked = new float[data.keys.Length * 3];
+        data.keysUnpacked = new float[data.keys.Length * 4];
 
         // unpack the keys
         for (int i = 0; i < data.keys.Length; i++){
@@ -185,13 +185,14 @@ public class Main : MonoBehaviour {
             int gi = Convert.ToInt16(g, 16);
             int bi = Convert.ToInt16(b, 16);
             Debug.Log(ri + " - " + gi + " - " + bi);
-            data.keysUnpacked[i * 3] = ri;
-            data.keysUnpacked[i * 3 + 1] = gi;
-            data.keysUnpacked[i * 3 + 2] = bi;
+            data.keysUnpacked[i * 4] = ri / 255f;
+            data.keysUnpacked[i * 4 + 1] = gi / 255f;
+            data.keysUnpacked[i * 4 + 2] = bi / 255f;
+            data.keysUnpacked[i * 4 + 3] = (ri+gi+bi == 0) ? 0f : 1f; 
         }
 
         // extract the colors (ignores the transparent color)
-        for (int i = 4; i < data.keys.Length; i+=4){
+        for (int i = 4; i < data.keysUnpacked.Length; i+=4){
             Vector4 col = new Vector4(0,0,0,0);
 
             for (int v = 0; v < 4; v++){
