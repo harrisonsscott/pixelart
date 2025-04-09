@@ -189,6 +189,17 @@ int main(int argc, char *argv[]){
         g = ssg.str();
         b = ssb.str();
 
+        // make sure each hex value is 2 digits
+        if (int(palette[i][2]) < 16){
+            r = "0" + r;
+        }
+        if (int(palette[i][1]) < 16){
+            g = "0" + g;
+        }
+        if (int(palette[i][0]) < 16){
+            b = "0" + b;
+        }
+
         j["keys"][i] = r + g + b;
     }
 
