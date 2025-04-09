@@ -32,10 +32,24 @@ int main(int argc, char *argv[]){
     }
 
     // Load the image with 3 or 4 color channels
-    cv::Mat image = cv::imread(argv[1], cv::IMREAD_COLOR);
+    cv::Mat image = cv::imread(argv[1], cv::IMREAD_UNCHANGED);
     if (image.empty()){
         cout << "Error loading image " << argv[1] << endl;
         return -1;
+    }
+
+    // convert transparent pixels to black
+    if (image.channels() == 4){
+        for (int i = 0; i < image.size().area(); i++){
+            x = i % image.size().width;
+            y = floor(i / image.size().height);
+
+            Vec4b& color = image.at<Vec4b>(x,y);
+            if (color[3] == 0){
+                color = Vec4b(0, 0, 0, 255);
+            }
+        }
+        cvtColor(image, image, COLOR_BGRA2BGR);
     }
     
     // if (image.channels() == 3){
@@ -75,7 +89,7 @@ int main(int argc, char *argv[]){
         return -1;
     }
 
-    vector<Vec4b> palette; 
+    vector<Vec4b> palette;
     vector<int> amount;
     json j;
 
@@ -135,7 +149,7 @@ int main(int argc, char *argv[]){
 
         for (int v = 0; v < palette.size(); v++){
             sim2 = getSimilarity(color, palette[v]);
-            if (sim2 <= sim){
+            if (sim2 < sim){
                 sim = sim2; // set similarity to the new, smaller value
                 closestColor = palette[v];
                 closestIndex = v;
@@ -170,8 +184,7 @@ int main(int argc, char *argv[]){
 
         // j["data"][i] = closestIndex;
 
-        im.at<Vec3b>(Point(x, y)) = Vec4bTo3b(closestColor);
-
+        // im.at<Vec3b>(Point(x, y)) = Vec4bTo3b(closestColor);
         prevIndex = closestIndex;
     }
 

@@ -11,4 +11,4 @@ for file in os.listdir(directory):
     if fileName != newName:
         os.rename(f"./batchInput/{fileName}", f"./batchInput/{newName}")
 
-    os.system(f"./pixelArt ./batchInput/{newName} ./batchOutput/{jsonName} 32 32 500")
+    os.system(f"./pixelArt ./batchInput/{newName} ./batchOutput/{jsonName} 32 32 1000")
