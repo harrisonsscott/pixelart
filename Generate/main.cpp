@@ -9,6 +9,14 @@ using namespace cv;
 using namespace std;
 using json = nlohmann::json;
 
+float getSimilarity(Vec4b color1, Vec4b color2){
+    return
+        0.11 * std::pow(color1[0] - color2[0], 2) +
+        0.59 * std::pow(color1[1] - color2[1], 2) +
+        0.3 * std::pow(color1[2] - color2[2], 2) +
+        0.1 * std::pow(color1[3] - color2[3], 2); // Adjust the weight for alpha
+}
+
 int main(int argc, char *argv[]){
     const Size maxSize(256, 256); // the maximum size an output image can be (recommended to be 256x256)
     ushort x, y;
@@ -55,10 +63,41 @@ int main(int argc, char *argv[]){
         size = Size(sideLength, sideLength);
     }
 
+    int threshold = atoi(argv[5]);
+
+    if (threshold < 0){
+        cout << "Color threshold cannot be below 0!" << endl;
+        return -1;
+    }
+
+    vector<Vec4b> palette; 
+    vector<int> amount;
+    json j;
+
+    // the output name of the file
+    string name = argv[2];
+
+    size_t slashPos = name.find_last_of('/');
+    size_t dotPos = name.find_last_of('.');
+
+    string lastElement;
+    if (slashPos != string::npos && dotPos != string::npos) {
+        name = name.substr(slashPos + 1, dotPos - slashPos - 1);
+    } else if (slashPos != string::npos) {
+        name = name.substr(slashPos + 1);
+    } else if (dotPos != string::npos) {
+        name = name.substr(0, dotPos);
+    } else {
+        name = name;
+    }
+
+    j["name"] = name;
+
     // resize the image
     Mat im = Mat::zeros(size, image.type());
     resize(image, im, size, INTER_AREA);
     imwrite("resized.png", im);
+    
 
     for (int i = 0; i < size.area(); i++){
         x = floor(i / size.height);
@@ -66,11 +105,21 @@ int main(int argc, char *argv[]){
 
         Vec3b color = image.at<Vec3b>(Point(x, y));
         Vec4b color2 = image.at<Vec4b>(Point(x, y));
-        cout << color << " - " << color2 << endl;
+        // cout << color << " - " << color2 << endl;
     }
+
+    ofstream outputFile(argv[2]); // output file for the json
+
+    if (!outputFile.is_open()){
+        cout << "Error opening file " << argv[2] << endl;
+        return -1;
+    }
+
+    outputFile << j.dump(); // export the json data
 
     // cleaning up
     image.release();
+    outputFile.close();
 
     return 0;
 }
