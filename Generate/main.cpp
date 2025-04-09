@@ -188,7 +188,7 @@ int main(int argc, char *argv[]){
         prevIndex = closestIndex;
     }
 
-    imwrite("resized.png", im);
+    imwrite(name + ".png", im);
 
     // encode the colors as hex values
     for (int i = 0; i < palette.size(); i++){
