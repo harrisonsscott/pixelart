@@ -102,7 +102,7 @@ int main(int argc, char *argv[]){
 
     // resize the image
     Mat im = Mat::zeros(size, image.type());
-    resize(image, im, size, INTER_AREA);
+    resize(image, im, size, 0, 0);
     
     // loop over all the pixel to encode them to the json
     uint sim; // how different the current pixel is from all the others (0 = identical to an existing color)
@@ -116,7 +116,7 @@ int main(int argc, char *argv[]){
         y = i % size.width;
         sim = 1410065407; // start at an extremely high number and decrease to the smallest possible value
 
-        col3b = image.at<Vec3b>(Point(x, y)); // temporary value
+        col3b = im.at<Vec3b>(Point(x, y)); // temporary value
         color = Vec4b(col3b[0], col3b[1], col3b[2], 255);
         closestColor = color;
 
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]){
             palette.push_back(color);
         }
 
-        im.at<Vec3b>(Point(x, y)) = Vec4bTo3b(closestColor);
+        im.at<Vec3b>(Point(x, y)) = Vec4bTo3b(color);
     }
 
     imwrite("resized.png", im);
