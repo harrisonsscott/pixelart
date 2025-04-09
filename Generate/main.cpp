@@ -9,6 +9,7 @@ using namespace cv;
 using namespace std;
 using json = nlohmann::json;
 
+// returns a number from 0 to ~71,000
 float getSimilarity(Vec4b color1, Vec4b color2){
     return
         0.11 * std::pow(color1[0] - color2[0], 2) +
@@ -110,6 +111,7 @@ int main(int argc, char *argv[]){
     Vec3b col3b; // temporary value for calculating color
     Vec4b color; // color of the current pixel
     Vec4b closestColor; // current color in the palette the current pixel is closest to
+    int closestIndex; // index of the closestColor in the palette
 
     for (int i = 0; i < size.area(); i++){
         x = floor(i / size.height);
@@ -120,11 +122,18 @@ int main(int argc, char *argv[]){
         color = Vec4b(col3b[0], col3b[1], col3b[2], 255);
         closestColor = color;
 
+        if (i == 0){
+            palette.push_back(color);
+            j["data"][0] = 0;
+            continue;
+        }
+
         for (int v = 0; v < palette.size(); v++){
             sim2 = getSimilarity(color, palette[v]);
             if (sim2 <= sim){
                 sim = sim2; // set similarity to the new, smaller value
                 closestColor = palette[v];
+                closestIndex = v;
             }
         }
 
@@ -133,13 +142,27 @@ int main(int argc, char *argv[]){
             palette.push_back(color);
         }
 
-        im.at<Vec3b>(Point(x, y)) = Vec4bTo3b(color);
+        j["data"][i] = closestIndex;
+
+        im.at<Vec3b>(Point(x, y)) = Vec4bTo3b(closestColor);
     }
 
     imwrite("resized.png", im);
 
+    // encode the colors as hex values
     for (int i = 0; i < palette.size(); i++){
-        cout << palette[i] << endl;
+        stringstream ssr, ssg, ssb;
+        string r, g, b;
+
+        ssr << hex << int(palette[i][2]);
+        ssg << hex << int(palette[i][1]);
+        ssb << hex << int(palette[i][0]);
+
+        r = ssr.str();
+        g = ssg.str();
+        b = ssb.str();
+
+        j["keys"][i] = r + g + b;
     }
 
     ofstream outputFile(argv[2]); // output file for the json
