@@ -86,4 +86,5 @@ _deps
 
 # Other
 /Generate/*.png
+/Generate/batchInput/*
 *.json

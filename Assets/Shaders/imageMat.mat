@@ -96,11 +96,11 @@ Material:
     - _Grid: 0
     - _LengthData: 1
     - _NumIndex: 6.26
-    - _NumSelected: 5
+    - _NumSelected: 3
     - _NumberData: 1.37
     - _Solved: 0
     - _Spacing: 0.2
-    - _Thickness: 0.04
+    - _Thickness: 0.02
     - _isBending: 0
     m_Colors:
     - _GridSize: {r: 32, g: 32, b: 0, a: 0}

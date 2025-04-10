@@ -1,14 +1,21 @@
 import os, time
+from PIL import Image
 
 directory = os.fsencode("./batchInput/")
+inputDir = "./batchInput/"
+outputDir = "./batchOutput/"
+
 
 for file in os.listdir(directory):
     fileName = os.fsdecode(file)
     newName = "".join(map(lambda c: c if c != " " else "", fileName))
     jsonName = newName.split(".")[0] + ".json"
 
+    image = Image.open(f"{inputDir}{fileName}");
+    width, height = image.size
+
     # rename files if they have spaces
     if fileName != newName:
-        os.rename(f"./batchInput/{fileName}", f"./batchInput/{newName}")
+        os.rename(f"{inputDir}{fileName}", f"{inputDir}{newName}")
 
-    os.system(f"./pixelArt ./batchInput/{newName} ./batchOutput/{jsonName} 32 32 1000")
+    os.system(f"./pixelArt {inputDir}{newName} {outputDir}{jsonName} {width} {height} 1000")
