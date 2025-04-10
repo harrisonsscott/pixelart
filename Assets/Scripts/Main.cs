@@ -283,6 +283,7 @@ public class Main : MonoBehaviour {
     }
 
     private void Pan(){
+        #if !UNITY_EDITOR
         if (Input.GetMouseButtonDown(0)){
             Vector2 pos = GetPosition(Input.GetTouch(0).position);
             if (GetNumber(pos) == currentNumber && !IsDrawn(pos)){
@@ -311,9 +312,12 @@ public class Main : MonoBehaviour {
                 return;
             }
         }
+        #endif
     }
 
     private void Zoom(){
+        #if !UNITY_EDITOR
+        // pinch to zoom on phone
         if (Input.touchCount >= 2){
             if (initialDiff == Vector3.zero){
                 initialDiff = Input.GetTouch(1).position - Input.GetTouch(0).position;
@@ -334,7 +338,21 @@ public class Main : MonoBehaviour {
         } else {
             initialDiff = Vector3.zero;
         }
+        #else
+        // scroll to zoom on the computer
+        float scrollDelta = Input.mouseScrollDelta.y;
+        if (scrollDelta != 0f){
+            cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scrollDelta, 1, 20);
 
+            if (cam.orthographicSize < (originalZoom - 1) && !usingGrid){
+                usingGrid = true;
+                RenderImage();
+            } else if (cam.orthographicSize > originalZoom && usingGrid){
+                usingGrid = false;
+                RenderImage();
+            }    
+        }
+        #endif
     }
 
     private void Update() {
