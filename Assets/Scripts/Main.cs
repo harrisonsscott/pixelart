@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
+using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -19,7 +20,6 @@ public class Main : MonoBehaviour {
     public Material imageMaterial;
 
     [Header("Data")]
-    public TextAsset textAsset; // json data
     public bool usingGrid;
     [SerializeField] List<int> dataList;
     [SerializeField] List<bool> transparentList;
@@ -79,7 +79,10 @@ public class Main : MonoBehaviour {
             button = gameObject.AddComponent<Button>();
         }
 
-        NewImage(textAsset.text);
+        // a random image is selected from resources/data/
+        TextAsset[] textAssets = Resources.LoadAll<TextAsset>("data/");
+
+        NewImage(textAssets[UnityEngine.Random.Range(0, textAssets.Length-1)].text);
         RenderImage();
         ChangeCurrentNumber(5);
 
@@ -319,7 +322,7 @@ public class Main : MonoBehaviour {
             Vector3 currentZoomDiff = Input.GetTouch(1).position - Input.GetTouch(0).position;
             float zoomDiff = currentZoomDiff.magnitude - initialDiff.magnitude;
             Debug.Log(zoomDiff);
-            cam.orthographicSize = Mathf.Clamp(initialZoom - zoomDiff/256f, 1, 20);
+            cam.orthographicSize = Mathf.Clamp(initialZoom - zoomDiff/200f, 1, 20);
 
             if (cam.orthographicSize < (originalZoom - 1) && !usingGrid){
                 usingGrid = true;
