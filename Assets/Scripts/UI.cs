@@ -82,9 +82,11 @@ public class UI : MonoBehaviour
         
         GameObject progress = clone.transform.Find("Progress").gameObject;
         GameObject progressBack = clone.transform.Find("ProgressBack").gameObject;
+        TMP_Text text = clone.transform.Find("Text").GetComponent<TMP_Text>();
 
         progress.transform.GetChild(0).GetComponent<Image>().color = color;
         progress.GetComponent<ProgressBar>().progress = 0f;
+        text.color = color.grayscale > 0.8 ? Color.black : Color.white;
 
         progressBack.SetActive(false);
         progress.SetActive(false);
