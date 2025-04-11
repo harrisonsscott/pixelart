@@ -139,6 +139,12 @@ int main(int argc, char *argv[]){
         sim = 1410065407; // start at an extremely high number and decrease to the smallest possible value
 
         col3b = im.at<Vec3b>(Point(x, y)); // temporary value
+
+        // black pixels represent transparency, so a truly black pixel is slightly brighter
+        if (col3b == Vec3b(0, 0, 0)){
+            col3b = Vec3b(1, 1, 1);
+        }
+
         color = Vec4b(col3b[0], col3b[1], col3b[2], 255);
         closestColor = color;
 
@@ -204,15 +210,12 @@ int main(int argc, char *argv[]){
         b = ssb.str();
 
         // make sure each hex value is 2 digits
-        if (int(palette[i][2]) < 16){
+        if (int(palette[i][2]) < 16)
             r = "0" + r;
-        }
-        if (int(palette[i][1]) < 16){
+        if (int(palette[i][1]) < 16)
             g = "0" + g;
-        }
-        if (int(palette[i][0]) < 16){
+        if (int(palette[i][0]) < 16)
             b = "0" + b;
-        }
 
         j["keys"][i] = r + g + b;
     }
