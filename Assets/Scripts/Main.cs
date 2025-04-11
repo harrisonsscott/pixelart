@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using System.IO;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -99,6 +100,16 @@ public class Main : MonoBehaviour {
         CurrentNumber = 1;
     }
 
+    public int[] Decompress(ushort number, ushort length) {
+        List<int> list = new List<int>();
+
+        for (int i = 0; i < length; i++){
+            list.Add(number);
+        }
+
+        return list.ToArray();
+    }
+
     public Vector2 GetPosition(Vector3 mousePos){ // turns a mouse position into a position on the image ( (0,0) is the top left )
         Vector2 worldPosition = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 0));
         Vector2 gridPos = (worldPosition * 50) / (new Vector2(512.0f, 512.0f) / resolution);
@@ -160,8 +171,8 @@ public class Main : MonoBehaviour {
         solved = data.solved;
 
         // decompress the data
-        for (int i = 0; i < data.data.Length; i++){
-            dataList.AddRange(data.data[i].Decompress());
+        for (int i = 0; i < data.data.Length; i+=2){
+            dataList.AddRange(Decompress(data.data[i], data.data[i+1]));
         }
 
         // calculate how many pixels of each color there are

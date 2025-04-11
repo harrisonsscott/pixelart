@@ -139,12 +139,6 @@ int main(int argc, char *argv[]){
         sim = 1410065407; // start at an extremely high number and decrease to the smallest possible value
 
         col3b = im.at<Vec3b>(Point(x, y)); // temporary value
-
-        // black pixels represent transparency, so a truly black pixel is slightly brighter
-        if (col3b == Vec3b(0, 0, 0)){
-            col3b = Vec3b(1, 1, 1);
-        }
-
         color = Vec4b(col3b[0], col3b[1], col3b[2], 255);
         closestColor = color;
 
@@ -173,8 +167,8 @@ int main(int argc, char *argv[]){
             seqNumber = closestIndex;
             seq++;
         } else {
-            j["data"][seqIndex]["number"] = seqNumber; // number
-            j["data"][seqIndex]["length"] = seq; // amount of sequential numbers
+            j["data"][seqIndex] = seqNumber; // number
+            j["data"][seqIndex+1] = seq; // amount of sequential numbers
             
             while (amount.size() <= seqNumber){
                 amount.push_back(0);
@@ -182,7 +176,7 @@ int main(int argc, char *argv[]){
 
             amount[seqNumber] += seq;
 
-            seqIndex++;
+            seqIndex+=2;
             seq = 1;
             seqNumber = closestIndex;
 
