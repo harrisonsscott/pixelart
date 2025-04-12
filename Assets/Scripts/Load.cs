@@ -1,96 +1,46 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 // loads json files from the data folder
 
+/* 
+The Resources folder in the editor only represents unmodified data
+saved data is stored to Application.persistentDataPath
+
+*/
+
 public static class Load
 {
-    public static List<TextAsset> textAssets;
-    public static List<ImageData> imageDatas;
-    public static List<string> names;
-
-    private static void Init(){
-        imageDatas = new List<ImageData>();
-        names = new List<string>();
-
-        textAssets = Resources.LoadAll<TextAsset>("data").ToList();
-
-        foreach (TextAsset textAsset in textAssets){
-            ImageData data = JsonUtility.FromJson<ImageData>(textAsset.text);
-
-            imageDatas.Add(data);
-            names.Add(data.name);
-
-        }
-    }
-
-    public static void Sort(SortMode sortMode){
-        // group lists together
-        List<DataMix> mix = new List<DataMix>();
-
-        for (int i = 0; i < textAssets.Count;i++){
-            mix.Add(new DataMix(
-                textAssets[i],
-                imageDatas[i],
-                names[i]
-            ));
-        }
-
-        switch(sortMode){
-            case SortMode.AlphabetAsc:
-                mix.Sort((x, y) => x.imageData.name.CompareTo(y.imageData.name));
-                break;
-            case SortMode.AlphabetDes:
-                mix.Sort((x, y) => x.imageData.name.CompareTo(y.imageData.name));
-                mix = mix.Flip();
-                break;
-            case SortMode.Random:
-                break;
-        }
-
-        // unpack the lists
-
-        for (int i = 0; i < mix.Count; i++){
-            textAssets[i] = mix[i].textAsset;
-            imageDatas[i] = mix[i].imageData;
-            names[i] = mix[i].name;
-        }
-    }
-
-    public static string LoadJson(string name)
+    public static ImageData LoadData(string name)
     {
-        if (textAssets == null){
-            Init();
-        }
+        string path = Application.persistentDataPath + "/" + name + ".data";
+        if (File.Exists(path)){
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream stream = new FileStream(path, FileMode.Open);
 
-        TextAsset textAsset = Resources.Load<TextAsset>(name);
-        return textAsset.text;
+            ImageData data = formatter.Deserialize(stream) as ImageData;
+            stream.Close();
+
+            return data;
+        } else {
+            Debug.LogError("File " + name + ".data not found!");
+            return null;
+        }
     }
 
-    public static List<string> LoadJson(int amount, SortMode sortMode){
-        if (textAssets == null){
-           Init();
-        }
+    // dont include the file ending for dest
+    public static void SaveData(ImageData data, string dest){
         
-        if (amount > textAssets.Count){
-            Debug.LogError("Count exceeds array size!");
-            return new List<string>();
-        }
+        BinaryFormatter formatter = new BinaryFormatter();
+        string path = Application.persistentDataPath + "/" + dest + ".data";
 
-        Sort(SortMode.AlphabetDes);
-
-        foreach(var name in names){
-            Debug.Log(name);
-        }
-
-        List<string> files = new List<string>();
-
-        foreach(TextAsset asset in textAssets.GetRange(0, amount)){
-            files.Add(asset.text);
-        }
-
-        return files;
+        Debug.Log(path);
+        FileStream stream = new FileStream(path, FileMode.Create);
+        formatter.Serialize(stream, data);
+        stream.Close();
     }
 }
 
