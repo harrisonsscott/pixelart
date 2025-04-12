@@ -14,15 +14,13 @@ saved data is stored to Application.persistentDataPath
 
 public static class Load
 {
+    // loads a json file from the persistent data path
     public static ImageData LoadData(string name)
     {
-        string path = Application.persistentDataPath + "/" + name + ".data";
+        string path = Application.persistentDataPath + "/" + name + ".json";
         if (File.Exists(path)){
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(path, FileMode.Open);
-
-            ImageData data = formatter.Deserialize(stream) as ImageData;
-            stream.Close();
+            string dataRaw = File.ReadAllText(path);
+            ImageData data = JsonUtility.FromJson<ImageData>(dataRaw);
 
             return data;
         } else {
@@ -31,16 +29,11 @@ public static class Load
         }
     }
 
-    // dont include the file ending for dest
+    // saves a json file to the persistent data path, dont include the file ending in dest
     public static void SaveData(ImageData data, string dest){
         
-        BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/" + dest + ".data";
-
-        Debug.Log(path);
-        FileStream stream = new FileStream(path, FileMode.Create);
-        formatter.Serialize(stream, data);
-        stream.Close();
+        string path = Application.persistentDataPath + "/" + dest + ".json";
+        File.WriteAllText(path, JsonUtility.ToJson(data));
     }
 }
 

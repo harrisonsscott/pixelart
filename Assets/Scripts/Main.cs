@@ -81,9 +81,13 @@ public class Main : MonoBehaviour {
         }
 
         // a random image is selected from resources/data/
-        TextAsset[] textAssets = Resources.LoadAll<TextAsset>("data/");
+        // TextAsset[] textAssets = Resources.LoadAll<TextAsset>("data/");
+        // NewImage(textAssets[UnityEngine.Random.Range(0, textAssets.Length-1)].text);
+        
+        // load an already started file
+        string cherryPie = JsonUtility.ToJson(Load.LoadData("CherryPie"));
+        NewImage(cherryPie);
 
-        NewImage(textAssets[UnityEngine.Random.Range(0, textAssets.Length-1)].text);
         RenderImage();
         ChangeCurrentNumber(5);
 
@@ -375,7 +379,7 @@ public class Main : MonoBehaviour {
         timer++;
 
         if (timer % 120 == 0){
-            Load.SaveJson(data, "test");
+            Load.SaveData(data, data.name);
         }
     }
 

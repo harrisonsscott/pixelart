@@ -11,9 +11,4 @@ public class ImageData
     public int[] solved;
 }
 
-public class Data : MonoBehaviour
-{
-    private void Start() {
-        Load.LoadJson(1, SortMode.Random);
-    }
-}
+public class Data : MonoBehaviour { }
