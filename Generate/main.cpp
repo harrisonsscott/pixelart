@@ -132,6 +132,10 @@ int main(int argc, char *argv[]){
     int seqNumber = 0;
     int seqIndex = 0;
 
+    
+    int invisPixels = 0; // invisible pixels aka black pixels, used for determining the progress of an image by not counting the invisible pixels as progress
+
+
     for (int i = 0; i < size.area(); i++){
         j["solved"][i] = 0;
         x = i % size.width;
@@ -154,6 +158,10 @@ int main(int argc, char *argv[]){
                 closestColor = palette[v];
                 closestIndex = v;
             }
+        }
+
+        if (closestColor[0] + closestColor[1] + closestColor[2] == 0){
+            invisPixels++;
         }
 
         // if the current pixel's color is different from all the other pixels, add it to the palette
@@ -220,6 +228,8 @@ int main(int argc, char *argv[]){
         cout << "Error opening file " << argv[2] << endl;
         return -1;
     }
+
+    j["invisPixels"] = invisPixels;
 
     outputFile << j.dump(); // export the json data
 
