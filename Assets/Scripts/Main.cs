@@ -19,6 +19,7 @@ public class Main : MonoBehaviour {
     public Material imageMaterial;
 
     [Header("Data")]
+    int timer; // used for counting, increased by 1 each frame
     public bool usingGrid;
     [SerializeField] List<int> dataList;
     [SerializeField] List<bool> transparentList;
@@ -44,7 +45,6 @@ public class Main : MonoBehaviour {
     public Texture2DArray numbers; // 2d texture array with numbers 0-9
 
     public ImageData data;
-    public int[] solved;
     public Vector2 resolution; // resolution of the image rendered to the screen (not actual amount of pixels)
 
     [Header("Camera Movement")]
@@ -66,6 +66,8 @@ public class Main : MonoBehaviour {
     public UI classUI;
 
     private void Start() {
+        timer = 1;
+
         if (classUI == null)
             classUI = FindAnyObjectByType<UI>();
     
@@ -127,7 +129,7 @@ public class Main : MonoBehaviour {
             classUI.ChangeProgress(currentNumber, (float)(amountFilledList[currentNumber]+1)/amountList[currentNumber]);
             amountFilledList[currentNumber] += 1;
         }
-        solved[(int)(y * resolution.y + x)] = 1;
+        data.solved[(int)(y * resolution.y + x)] = 1;
         RenderImage();
     }
 
@@ -137,11 +139,11 @@ public class Main : MonoBehaviour {
 
     public bool IsDrawn(int x, int y){ // returns true if the selected pixel has been colored in
         int index = (int)(y * resolution.y + x);
-        if (solved.Length < index){
+        if (data.solved.Length < index){
             return false;
         }
         
-        return solved[index] == 1;
+        return data.solved[index] == 1;
     }
 
     public bool IsDrawn(Vector2 pos){
@@ -166,7 +168,6 @@ public class Main : MonoBehaviour {
 
         dataList = new List<int>();
         colorsList = new List<Vector4>();
-        solved = data.solved;
 
         // decompress the data
         for (int i = 0; i < data.data.Length; i+=2){
@@ -220,7 +221,6 @@ public class Main : MonoBehaviour {
         classUI.SelectColor(1); // select the first color automatically
     }
 
-
     public RenderTexture RenderImage() // renders an image onto a material
     {
         target = new RenderTexture(data.size[0], data.size[1], 24)
@@ -253,7 +253,7 @@ public class Main : MonoBehaviour {
         keyBuffer.SetData(data.keysUnpacked);
 
         ComputeBuffer finishedBuffer = new ComputeBuffer(1, sizeof(int) * data.solved.Length);
-        finishedBuffer.SetData(solved);
+        finishedBuffer.SetData(data.solved);
 
         generateShader.SetTexture(0, "Result", target);
         generateShader.SetVector("Resolution", resolution);
@@ -370,6 +370,15 @@ public class Main : MonoBehaviour {
             Zoom();
         }
     }
+
+    private void FixedUpdate() {
+        timer++;
+
+        if (timer % 120 == 0){
+            Load.SaveJson(data, "test");
+        }
+    }
+
     public bool UsingUI(){ // raycasts to see if the user is current using the ui
         m_PointerEventData = new PointerEventData(m_EventSystem){
             position = Input.mousePosition
