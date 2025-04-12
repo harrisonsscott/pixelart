@@ -85,8 +85,13 @@ public class Main : MonoBehaviour {
         // NewImage(textAssets[UnityEngine.Random.Range(0, textAssets.Length-1)].text);
         
         // load an already started file
-        string cherryPie = JsonUtility.ToJson(Load.LoadData("CherryPie"));
-        NewImage(cherryPie);
+        if (File.Exists(Application.persistentDataPath + "/CherryPie.json")){
+            string cherryPie = JsonUtility.ToJson(Load.LoadData("CherryPie"));
+            NewImage(cherryPie);
+        } else {
+            TextAsset cherryPie = Resources.Load<TextAsset>("data/CherryPie");
+            NewImage(cherryPie.text);
+        }
 
         RenderImage();
         ChangeCurrentNumber(5);
