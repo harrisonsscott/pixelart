@@ -10,7 +10,7 @@ public class Menu : MonoBehaviour
     public Transform proContainer;
     public Transform newContainer;
     public Transform popularContainer;
-
+    public GameObject previewReference; // a 256x256 gameobject with a raw image 
     public ComputeShader generateShader; // GenerateShaderPreview.compute
     public RenderTexture target;
     public Material material;
@@ -20,11 +20,7 @@ public class Menu : MonoBehaviour
         return JsonUtility.FromJson<ImageData>(textAssets[index].text);
     }
 
-    void Start()
-    {
-        textAssets = Resources.LoadAll<TextAsset>("data/");
-        ImageData data = getData(0);
-
+    Texture generateImage(ImageData data){
         List<int> dataList = new List<int>();
 
         for (int i = 0; i < data.data.Length; i+=2){
@@ -35,7 +31,7 @@ public class Menu : MonoBehaviour
 
         data = Data.UnpackColors(data);
 
-        target = new RenderTexture(32, 32, 24)
+        target = new RenderTexture(data.size[0], data.size[1], 24)
         {
             enableRandomWrite = true,
             filterMode = FilterMode.Point
@@ -58,8 +54,20 @@ public class Menu : MonoBehaviour
         generateShader.SetBuffer(0, "keys", keyBuffer);
         generateShader.SetBuffer(0, "finished", finishedBuffer);
         generateShader.Dispatch(0, target.width / 8, target.height / 8, 1);
+        
+        return target;
+    }
 
-        GameObject element = proContainer.GetChild(0).gameObject;
-        element.GetComponent<RawImage>().texture = target;
+    void Start()
+    {
+        textAssets = Resources.LoadAll<TextAsset>("data/");
+        for (int i = 0; i < textAssets.Length; i++)
+        {
+            ImageData data = getData(i);
+
+            GameObject element = Instantiate(previewReference);
+            element.transform.parent = proContainer;
+            element.GetComponent<RawImage>().texture = generateImage(data);
+        }
     }
 }
