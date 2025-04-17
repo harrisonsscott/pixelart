@@ -11,14 +11,19 @@ public class Menu : MonoBehaviour
     public Transform newContainer;
     public Transform popularContainer;
 
-    public ComputeShader generateShader; // GenerateShader.compute
+    public ComputeShader generateShader; // GenerateShaderPreview.compute
     public RenderTexture target;
     public Material material;
+    private TextAsset[] textAssets;
+
+    ImageData getData(int index){
+        return JsonUtility.FromJson<ImageData>(textAssets[index].text);
+    }
 
     void Start()
     {
-        TextAsset[] textAssets = Resources.LoadAll<TextAsset>("data/");
-        ImageData data = JsonUtility.FromJson<ImageData>(textAssets[UnityEngine.Random.Range(0, textAssets.Length-1)].text);
+        textAssets = Resources.LoadAll<TextAsset>("data/");
+        ImageData data = getData(0);
 
         List<int> dataList = new List<int>();
 

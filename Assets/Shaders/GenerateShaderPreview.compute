@@ -1,0 +1,21 @@
+#pragma kernel CSMain
+
+RWTexture2D<float4> Result;
+
+RWStructuredBuffer<int> data; 
+RWStructuredBuffer<float4> keys;
+
+float2 Resolution;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    // generates the main image but in black and white
+    float key = data[(Resolution.x - 1 - id.y) * Resolution.y + id.x];
+    float4 color = keys[key];
+    float avg = (color.r + color.g + color.b)/2.0;
+
+    color.a = ceil(color.a);
+
+    Result[id.xy] = float4(avg, avg, avg, color.a);
+}
