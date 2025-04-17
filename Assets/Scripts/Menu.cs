@@ -10,6 +10,7 @@ public class Menu : MonoBehaviour
     public Transform proContainer;
     public Transform newContainer;
     public Transform popularContainer;
+    public Transform continuePlayingContainer;
     public GameObject previewReference; // a 256x256 gameobject with a raw image 
     public ComputeShader generateShader; // GenerateShaderPreview.compute
     public RenderTexture target;
@@ -49,7 +50,7 @@ public class Menu : MonoBehaviour
         finishedBuffer.SetData(data.solved);
 
         generateShader.SetTexture(0, "Result", target);
-        generateShader.SetVector("Resolution", new Vector2(32, 32));
+        generateShader.SetVector("Resolution", new Vector2(data.size[0], data.size[1]));
         generateShader.SetBuffer(0, "data", dataBuffer);
         generateShader.SetBuffer(0, "keys", keyBuffer);
         generateShader.SetBuffer(0, "finished", finishedBuffer);
@@ -60,6 +61,7 @@ public class Menu : MonoBehaviour
 
     void Start()
     {
+        // load the menu
         textAssets = Resources.LoadAll<TextAsset>("data/");
         for (int i = 0; i < textAssets.Length; i++)
         {
@@ -68,6 +70,15 @@ public class Menu : MonoBehaviour
             GameObject element = Instantiate(previewReference);
             element.transform.parent = proContainer;
             element.GetComponent<RawImage>().texture = generateImage(data);
+        }
+
+        // load continue playing
+        List<ImageData> files = Load.LoadAllData();
+        for (int i = 0; i < files.Count; i++)
+        {
+            GameObject element = Instantiate(previewReference);
+            element.transform.parent = continuePlayingContainer;
+            element.GetComponent<RawImage>().texture = generateImage(files[i]);
         }
     }
 }

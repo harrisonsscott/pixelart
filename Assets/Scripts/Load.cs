@@ -17,7 +17,7 @@ public static class Load
     // loads a json file from the persistent data path
     public static ImageData LoadData(string name)
     {
-        string path = Application.persistentDataPath + "/" + name + ".json";
+        string path = Application.persistentDataPath + "/data/" + name + ".json";
         if (File.Exists(path)){
             string dataRaw = File.ReadAllText(path);
             ImageData data = JsonUtility.FromJson<ImageData>(dataRaw);
@@ -29,10 +29,22 @@ public static class Load
         }
     }
 
+    public static List<ImageData> LoadAllData(){
+        List<ImageData> files = new List<ImageData>();
+        string path = Application.persistentDataPath + "/data/";
+        string[] filesString = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+
+        foreach (string file in filesString){
+            files.Add(JsonUtility.FromJson<ImageData>(File.ReadAllText(file)));
+        }
+
+        return files;
+    }
+
     // saves a json file to the persistent data path, dont include the file ending in dest
     public static void SaveData(ImageData data, string dest){
         
-        string path = Application.persistentDataPath + "/" + dest + ".json";
+        string path = Application.persistentDataPath + "/data/" + dest + ".json";
         File.WriteAllText(path, JsonUtility.ToJson(data));
     }
 }
