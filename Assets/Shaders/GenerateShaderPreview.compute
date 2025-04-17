@@ -4,6 +4,7 @@ RWTexture2D<float4> Result;
 
 RWStructuredBuffer<int> data; 
 RWStructuredBuffer<float4> keys;
+RWStructuredBuffer<int> finished;
 
 float2 Resolution;
 
@@ -12,10 +13,15 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 {
     // generates the main image but in black and white
     float key = data[(Resolution.x - 1 - id.y) * Resolution.y + id.x];
+    float isDrawn = finished[(Resolution.x - 1 - id.y) * Resolution.y + id.x];
     float4 color = keys[key];
     float avg = (color.r + color.g + color.b)/2.0;
 
+    float r = avg * (1.0-isDrawn) + color.r * isDrawn;
+    float g = avg * (1.0-isDrawn) + color.g * isDrawn;
+    float b = avg * (1.0-isDrawn) + color.b * isDrawn;
+
     color.a = ceil(color.a);
 
-    Result[id.xy] = float4(avg, avg, avg, color.a);
+    Result[id.xy] = float4(r, g, b, color.a);
 }
