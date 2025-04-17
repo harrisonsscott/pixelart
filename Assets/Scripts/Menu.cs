@@ -28,7 +28,7 @@ public class Menu : MonoBehaviour
         List<int> dataList = new List<int>();
 
         for (int i = 0; i < data.data.Length; i+=2){
-            dataList.AddRange(Decompress(data.data[i], data.data[i+1]));
+            dataList.AddRange(Data.Decompress(data.data[i], data.data[i+1]));
         }
 
         data.keysUnpacked = new float[data.keys.Length * 4];
@@ -75,15 +75,5 @@ public class Menu : MonoBehaviour
 
         GameObject element = proContainer.GetChild(0).gameObject;
         element.GetComponent<RawImage>().texture = target;
-    }
-
-    public int[] Decompress(ushort number, ushort length) {
-        List<int> list = new List<int>();
-
-        for (int i = 0; i < length; i++){
-            list.Add(number);
-        }
-
-        return list.ToArray();
     }
 }
