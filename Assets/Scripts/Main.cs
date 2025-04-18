@@ -83,6 +83,8 @@ public class Main : MonoBehaviour {
         // a random image is selected from resources/data/
         TextAsset[] textAssets = Resources.LoadAll<TextAsset>("data/");
         NewImage(textAssets[UnityEngine.Random.Range(0, textAssets.Length-1)].text);
+        // TextAsset textAsset = Resources.Load<TextAsset>("data/Bananas");
+        // NewImage(textAsset.text);
         
         // load an already started file
         // if (File.Exists(Application.persistentDataPath + "/CherryPie.json")){
@@ -164,7 +166,6 @@ public class Main : MonoBehaviour {
 
     public void NewImage(string textData){
         data = JsonUtility.FromJson<ImageData>(textData);
-
         dataList = new List<int>();
         colorsList = new List<Vector4>();
 

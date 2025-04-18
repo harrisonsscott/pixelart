@@ -11,6 +11,7 @@ public class ImageData
     public float[] keysUnpacked;
     public int[] size;
     public int[] solved;
+    public string[] tags;
 }
 
 public static class Data {

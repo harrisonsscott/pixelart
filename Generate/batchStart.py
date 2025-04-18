@@ -10,6 +10,7 @@ for file in os.listdir(directory):
     fileName = os.fsdecode(file)
     newName = "".join(map(lambda c: c if c != " " else "", fileName))
     jsonName = newName.split(".")[0] + ".json"
+    print(jsonName)
 
     image = Image.open(f"{inputDir}{fileName}");
     width, height = image.size
@@ -18,4 +19,4 @@ for file in os.listdir(directory):
     if fileName != newName:
         os.rename(f"{inputDir}{fileName}", f"{inputDir}{newName}")
 
-    os.system(f"./pixelArt {inputDir}{newName} {outputDir}{jsonName} {width} {height} 1000")
+    os.system(f"./pixelArt {inputDir}{newName} {outputDir}{jsonName} {width} {height} 1000 1")
