@@ -11,11 +11,14 @@ public class Menu : MonoBehaviour
     public Transform newContainer;
     public Transform popularContainer;
     public Transform continuePlayingContainer;
+    public Transform menuTransform; // refers to Menu in MainCanvas
+    public Transform imageTransform; // refers to Image under ImageCanvas
     public GameObject previewReference; // a 256x256 gameobject with a raw image 
     public ComputeShader generateShader; // GenerateShaderPreview.compute
     public RenderTexture target;
     public Material material;
     private TextAsset[] textAssets;
+    public Main mainRef; // reference to Main.cs
 
     ImageData getData(int index){
         return JsonUtility.FromJson<ImageData>(textAssets[index].text);
@@ -65,20 +68,32 @@ public class Menu : MonoBehaviour
         textAssets = Resources.LoadAll<TextAsset>("data/");
         for (int i = 0; i < textAssets.Length; i++)
         {
+            int v = i; // v is constant while i isn't
             ImageData data = getData(i);
 
             GameObject element = Instantiate(previewReference);
             element.transform.parent = proContainer;
             element.GetComponent<RawImage>().texture = generateImage(data);
+            element.GetComponent<Button>().onClick.AddListener(() => {
+                // load an image
+                menuTransform.gameObject.SetActive(false);
+                imageTransform.gameObject.SetActive(true);
+                mainRef.NewImage(textAssets[v].text);
+                mainRef.RenderImage();
+                mainRef.ChangeCurrentNumber(5);
+            });
         }
 
         // load continue playing
         List<ImageData> files = Load.LoadAllData();
-        for (int i = 0; i < files.Count; i++)
-        {
-            GameObject element = Instantiate(previewReference);
-            element.transform.parent = continuePlayingContainer;
-            element.GetComponent<RawImage>().texture = generateImage(files[i]);
+        if (files.Count > 0){
+            for (int i = 0; i < files.Count; i++)
+            {
+                GameObject element = Instantiate(previewReference);
+                element.transform.parent = continuePlayingContainer;
+                element.GetComponent<RawImage>().texture = generateImage(files[i]);
+
+            }
         }
     }
 }

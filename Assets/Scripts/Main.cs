@@ -81,8 +81,8 @@ public class Main : MonoBehaviour {
         }
 
         // a random image is selected from resources/data/
-        TextAsset[] textAssets = Resources.LoadAll<TextAsset>("data/");
-        NewImage(textAssets[UnityEngine.Random.Range(0, textAssets.Length-1)].text);
+        // TextAsset[] textAssets = Resources.LoadAll<TextAsset>("data/");
+        // NewImage(textAssets[UnityEngine.Random.Range(0, textAssets.Length-1)].text);
         // TextAsset textAsset = Resources.Load<TextAsset>("data/Bananas");
         // NewImage(textAsset.text);
         
@@ -94,9 +94,6 @@ public class Main : MonoBehaviour {
         //     TextAsset cherryPie = Resources.Load<TextAsset>("data/CherryPie");
         //     NewImage(cherryPie.text);
         // }
-
-        RenderImage();
-        ChangeCurrentNumber(5);
 
         button.onClick.AddListener(() => {
             Vector2 pos = GetPosition(Input.mousePosition);
@@ -270,7 +267,7 @@ public class Main : MonoBehaviour {
         return target;
     }
 
-    private void ChangeCurrentNumber(int number){ // changes the current number and updates the shader
+    public void ChangeCurrentNumber(int number){ // changes the current number and updates the shader
         currentNumber = number;
 
         imageMaterial.SetFloat("_NumSelected", currentNumber);

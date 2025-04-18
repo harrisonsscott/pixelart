@@ -43,7 +43,9 @@ public static class Load
 
     // saves a json file to the persistent data path, dont include the file ending in dest
     public static void SaveData(ImageData data, string dest){
-        
+        if (dest == ""){
+            return;
+        }
         string path = Application.persistentDataPath + "/data/" + dest + ".json";
         File.WriteAllText(path, JsonUtility.ToJson(data));
     }
