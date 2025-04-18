@@ -89,3 +89,4 @@ _deps
 /Generate/images/*
 /Generate/batchInput/*
 *.json
+*.key

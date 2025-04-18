@@ -4,6 +4,8 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include "json.hpp"
+#include "base64.h"
+#include <curl/curl.h>
 
 using namespace cv;
 using namespace std;
@@ -16,6 +18,14 @@ float getSimilarity(Vec4b color1, Vec4b color2){
         0.59 * std::pow(color1[1] - color2[1], 2) +
         0.3 * std::pow(color1[2] - color2[2], 2) +
         0.1 * std::pow(color1[3] - color2[3], 2); // Adjust the weight for alpha
+}
+
+// converts an image to base64
+string encodeImage(const string& imagePath) {
+    ifstream file(imagePath, ios::binary);
+    vector<unsigned char> buffer(istreambuf_iterator<char>(file), {});
+    string encoded = base64_encode(buffer.data(), buffer.size());
+    return "data:image/png;base64," + encoded;
 }
 
 Vec3b Vec4bTo3b(Vec4b i){
@@ -230,6 +240,57 @@ int main(int argc, char *argv[]){
     }
 
     j["invisPixels"] = invisPixels;
+
+    // automatically add tags for search
+    CURL *curl = curl_easy_init();
+    string website = "https://api.openai.com/v1/chat/completions";
+    ifstream keyfile("chatgpt.key");
+    string key;
+    keyfile >> key;
+
+    if(curl) {
+        CURLcode res;
+        struct curl_slist *headers = NULL;
+        // const char* post = R"({"model": "gpt-4.1-nano", "input": "Write a one-sentence bedtime story about a unicorn."})";
+        string imageData = encodeImage(argv[1]);
+        json post = {
+            {"model", "gpt-4o-mini-2024-07-18"},
+            {"messages", json::array({
+                {
+                    {"role", "system"},
+                    {"content", "You are assigning a piece of pixel art tags that would make it useful when searching it up."}
+                },
+                {
+                    {"role", "user"},
+                    {"content", json::array({
+                        {
+                            {"type", "text"},
+                            {"text", "Give five tags that are relavent to the image in an array each in one word"}
+                        },
+                        {
+                            {"type", "image_url"},
+                            {"image_url", {
+                                {"url", imageData}
+                            }}
+                        }
+                    })}
+                }
+            })},
+            {"max_tokens", 1000}
+        };
+
+        string jsonPost = post.dump();
+        string authHeader = "Authorization: Bearer " + key;
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+        headers = curl_slist_append(headers, authHeader.c_str());
+        curl_easy_setopt(curl, CURLOPT_URL, website.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonPost.c_str());
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, jsonPost.length());
+        res = curl_easy_perform(curl);
+        cout << res << endl;
+        curl_easy_cleanup(curl);
+    }
 
     outputFile << j.dump(); // export the json data
 
