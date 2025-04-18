@@ -42,8 +42,8 @@ int main(int argc, char *argv[]){
     const Size maxSize(256, 256); // the maximum size an output image can be (recommended to be 256x256)
     ushort x, y;
 
-    if (argc < 5){
-        cout << "./pixelArt [Image] [Output] [Size X] [Size Y] [Threshold]" << endl;
+    if (argc < 6){
+        cout << "./pixelArt [Image] [Output] [Size X] [Size Y] [Threshold] [AddTags]" << endl;
         return -1;
     }
 
@@ -104,6 +104,9 @@ int main(int argc, char *argv[]){
         cout << "Color threshold cannot be below 0!" << endl;
         return -1;
     }
+
+    int addTags = atoi(argv[6]);
+    bool tags = addTags == 1;
 
     vector<Vec4b> palette;
     vector<int> amount;
@@ -255,9 +258,9 @@ int main(int argc, char *argv[]){
     string key;
     keyfile >> key;
 
-    if(curl) {
+    if(curl && tags) {
         struct curl_slist *headers = NULL;
-        string imageData = encodeImage(argv[1]);
+        string imageData = encodeImage(argv[1]);  
         // this is the body of the call
         json post = {
             {"model", "gpt-4o-mini-2024-07-18"},
@@ -296,21 +299,23 @@ int main(int argc, char *argv[]){
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
         curl_easy_perform(curl);
         curl_easy_cleanup(curl);
-    } else {
-        cout << "Could not load Curl!" << endl;
-        return -1;
-    }
-    // add the api response to the json
-    json res = json::parse(response);
-    string tagsRaw = res["choices"][0]["message"]["content"];
-    
-    size_t start = tagsRaw.find('\n') + 1;
-    size_t end = tagsRaw.rfind('\n');
-    tagsRaw = tagsRaw.substr(start, end - start);
 
-    json tagsJson = json::parse(tagsRaw);
-    for (int i = 0; i < 5; i++){
-        j["tags"][i] = tagsJson[i];
+        // add the api response to the json
+        json res = json::parse(response);
+        string tagsRaw = res["choices"][0]["message"]["content"];
+        
+        size_t start = tagsRaw.find('\n') + 1;
+        size_t end = tagsRaw.rfind('\n');
+        tagsRaw = tagsRaw.substr(start, end - start);
+    
+        json tagsJson = json::parse(tagsRaw);
+        for (int i = 0; i < 5; i++){
+            j["tags"][i] = tagsJson[i];
+        }
+    } else {
+        for (int i = 0; i < 5; i++){
+            j["tags"][i] = "NULL";
+        }
     }
     
     outputFile << j.dump(); // export the json data

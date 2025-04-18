@@ -9,12 +9,14 @@ The way the script is it resizes an image, loops over every pixel, puts the simi
 the corresponding palette color to json.
 
 Run with
-./pixelArt [Image] [Output] [Size X] [Size Y] [Threshold]
+./pixelArt [Image] [Output] [Size X] [Size Y] [Threshold] [AddTags]
 
 Instead of inputting a number for [Size Y], you can just put "x" instead, which would keep the aspect ratio of the original image.
 
 Where Size X and Y is the size of the outputted image, and threshold is the similarity between palette colors
 
+When [Addtags] is set to 1, an api is called to called to assign tags to the image. 
+This is slow and costs money, so set the parameter to 0 when testing. 
 
 To do a large amount of images at once, place all the images you want to convert into the ./batchInput/ folder, and run
 python3 batchStart.py
