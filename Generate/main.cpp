@@ -260,7 +260,7 @@ int main(int argc, char *argv[]){
         string imageData = encodeImage(argv[1]);
         // this is the body of the call
         json post = {
-            {"model", "gpt-4.1-nano"},
+            {"model", "gpt-4o-mini-2024-07-18"},
             {"messages", json::array({
                 {
                     {"role", "system"},
@@ -284,7 +284,6 @@ int main(int argc, char *argv[]){
             })},
             {"max_tokens", 1000}
         };
-
         string jsonPost = post.dump();
         string authHeader = "Authorization: Bearer " + key;
         headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -301,10 +300,14 @@ int main(int argc, char *argv[]){
         cout << "Could not load Curl!" << endl;
         return -1;
     }
-
     // add the api response to the json
     json res = json::parse(response);
     string tagsRaw = res["choices"][0]["message"]["content"];
+    
+    size_t start = tagsRaw.find('\n') + 1;
+    size_t end = tagsRaw.rfind('\n');
+    tagsRaw = tagsRaw.substr(start, end - start);
+
     json tagsJson = json::parse(tagsRaw);
     for (int i = 0; i < 5; i++){
         j["tags"][i] = tagsJson[i];
