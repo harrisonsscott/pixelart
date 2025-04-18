@@ -32,6 +32,12 @@ Vec3b Vec4bTo3b(Vec4b i){
     return Vec3b(i[0], i[1], i[2]);
 }
 
+// for storing the response for the tags
+size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+    ((string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
+
 int main(int argc, char *argv[]){
     const Size maxSize(256, 256); // the maximum size an output image can be (recommended to be 256x256)
     ushort x, y;
@@ -245,16 +251,16 @@ int main(int argc, char *argv[]){
     CURL *curl = curl_easy_init();
     string website = "https://api.openai.com/v1/chat/completions";
     ifstream keyfile("chatgpt.key");
+    string response;
     string key;
     keyfile >> key;
 
     if(curl) {
-        CURLcode res;
         struct curl_slist *headers = NULL;
-        // const char* post = R"({"model": "gpt-4.1-nano", "input": "Write a one-sentence bedtime story about a unicorn."})";
         string imageData = encodeImage(argv[1]);
+        // this is the body of the call
         json post = {
-            {"model", "gpt-4o-mini-2024-07-18"},
+            {"model", "gpt-4.1-nano"},
             {"messages", json::array({
                 {
                     {"role", "system"},
@@ -282,21 +288,33 @@ int main(int argc, char *argv[]){
         string jsonPost = post.dump();
         string authHeader = "Authorization: Bearer " + key;
         headers = curl_slist_append(headers, "Content-Type: application/json");
-        headers = curl_slist_append(headers, authHeader.c_str());
+        headers = curl_slist_append(headers, authHeader.c_str()); 
         curl_easy_setopt(curl, CURLOPT_URL, website.c_str());
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonPost.c_str());
         curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, jsonPost.length());
-        res = curl_easy_perform(curl);
-        cout << res << endl;
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+        curl_easy_perform(curl);
         curl_easy_cleanup(curl);
+    } else {
+        cout << "Could not load Curl!" << endl;
+        return -1;
     }
 
+    // add the api response to the json
+    json res = json::parse(response);
+    string tagsRaw = res["choices"][0]["message"]["content"];
+    json tagsJson = json::parse(tagsRaw);
+    for (int i = 0; i < 5; i++){
+        j["tags"][i] = tagsJson[i];
+    }
+    
     outputFile << j.dump(); // export the json data
-
+    
     // cleaning up
     image.release();
     outputFile.close();
-
+    
     return 0;
 }
