@@ -20,6 +20,7 @@ public class Menu : MonoBehaviour
     public Material material;
     private TextAsset[] textAssets;
     public Main mainRef; // reference to Main.cs
+    public UI classUI;
 
     ImageData getData(int index){
         return JsonUtility.FromJson<ImageData>(textAssets[index].text);
@@ -92,11 +93,12 @@ public class Menu : MonoBehaviour
                 EnablePlayItems();
                 mainRef.NewImage(textAssets[v].text);
                 mainRef.RenderImage();
-                mainRef.ChangeCurrentNumber(5);
+                mainRef.ChangeCurrentNumber(1);
             });
         }
 
         backButton.onClick.AddListener(() => {
+            classUI.ClearColors();
             EnablePlayItems(true);
         });
 

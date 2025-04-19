@@ -35,6 +35,7 @@ public class UI : MonoBehaviour
 
     public void ClearColors(){ // removes all the children in colorContent
         colorList = new List<Color>();
+        colorGOList = new List<GameObject>();
         for (int i = 0; i < colorContent.childCount; i++){
             Destroy(colorContent.GetChild(i).gameObject);
         }
