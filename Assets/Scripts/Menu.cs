@@ -12,6 +12,7 @@ public class Menu : MonoBehaviour
     public Transform popularContainer;
     public Transform continuePlayingContainer;
     public Transform menuTransform; // refers to Menu in MainCanvas
+    public Transform gameTransform; // refers to Game in MainCanvas
     public Transform imageTransform; // refers to Image under ImageCanvas
     public GameObject previewReference; // a 256x256 gameobject with a raw image 
     public ComputeShader generateShader; // GenerateShaderPreview.compute
@@ -65,6 +66,10 @@ public class Menu : MonoBehaviour
     void Start()
     {
         // load the menu
+        menuTransform.gameObject.SetActive(true);
+        gameTransform.gameObject.SetActive(false);
+        imageTransform.gameObject.SetActive(false);
+
         textAssets = Resources.LoadAll<TextAsset>("data/");
         for (int i = 0; i < textAssets.Length; i++)
         {
@@ -73,10 +78,12 @@ public class Menu : MonoBehaviour
 
             GameObject element = Instantiate(previewReference);
             element.transform.parent = proContainer;
+            element.GetComponent<RectTransform>().localScale = Vector3.one;
             element.GetComponent<RawImage>().texture = generateImage(data);
             element.GetComponent<Button>().onClick.AddListener(() => {
                 // load an image
                 menuTransform.gameObject.SetActive(false);
+                gameTransform.gameObject.SetActive(true);
                 imageTransform.gameObject.SetActive(true);
                 mainRef.NewImage(textAssets[v].text);
                 mainRef.RenderImage();
