@@ -11,10 +11,10 @@ public class Menu : MonoBehaviour
     public Transform newContainer;
     public Transform popularContainer;
     public Transform continuePlayingContainer;
-    public Transform menuTransform; // refers to Menu in MainCanvas
-    public Transform gameTransform; // refers to Game in MainCanvas
-    public Transform imageTransform; // refers to Image under ImageCanvas
+    public GameObject[] enableOnPlay;
+    public GameObject[] disableOnPlay;
     public GameObject previewReference; // a 256x256 gameobject with a raw image 
+    public Button backButton; // the arrow button in the top left corner
     public ComputeShader generateShader; // GenerateShaderPreview.compute
     public RenderTexture target;
     public Material material;
@@ -63,13 +63,20 @@ public class Menu : MonoBehaviour
         return target;
     }
 
+    // enables enableOnPlay and disabled disableOnPlay, unless flipped
+    public void EnablePlayItems(bool flip=false){
+        for (int i = 0; i < enableOnPlay.Length; i++){
+            enableOnPlay[i].SetActive(!flip);
+        }
+        for (int i = 0; i < disableOnPlay.Length; i++){
+            disableOnPlay[i].SetActive(flip);
+        }
+    }
+
     void Start()
     {
         // load the menu
-        menuTransform.gameObject.SetActive(true);
-        gameTransform.gameObject.SetActive(false);
-        imageTransform.gameObject.SetActive(false);
-
+        EnablePlayItems(true);
         textAssets = Resources.LoadAll<TextAsset>("data/");
         for (int i = 0; i < textAssets.Length; i++)
         {
@@ -82,14 +89,16 @@ public class Menu : MonoBehaviour
             element.GetComponent<RawImage>().texture = generateImage(data);
             element.GetComponent<Button>().onClick.AddListener(() => {
                 // load an image
-                menuTransform.gameObject.SetActive(false);
-                gameTransform.gameObject.SetActive(true);
-                imageTransform.gameObject.SetActive(true);
+                EnablePlayItems();
                 mainRef.NewImage(textAssets[v].text);
                 mainRef.RenderImage();
                 mainRef.ChangeCurrentNumber(5);
             });
         }
+
+        backButton.onClick.AddListener(() => {
+            EnablePlayItems(true);
+        });
 
         // load continue playing
         List<ImageData> files = Load.LoadAllData();
