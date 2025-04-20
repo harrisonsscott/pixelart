@@ -6,6 +6,8 @@ directory = os.fsencode("./batchInput/")
 inputDir = "./batchInput/"
 outputDir = "./batchOutput/"
 
+addTags = True
+
 
 for file in os.listdir(directory):
     fileName = os.fsdecode(file)
@@ -20,4 +22,8 @@ for file in os.listdir(directory):
     if fileName != newName:
         os.rename(f"{inputDir}{fileName}", f"{inputDir}{newName}")
 
-    os.system(f"./pixelArt {inputDir}{newName} {outputDir}{secrets.token_hex(16)}.json {width} {height} 1000 0")
+    # only 200k tokens are allowed per minute, and each image uses around 8k
+    if addTags:
+        time.sleep(3)
+
+    os.system(f"./pixelArt {inputDir}{newName} {outputDir}{secrets.token_hex(16)}.json {width} {height} 800 {1 if addTags else 0}")

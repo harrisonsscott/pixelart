@@ -6,6 +6,7 @@
 #include "json.hpp"
 #include "base64.h"
 #include <curl/curl.h>
+#include <chrono>
 
 using namespace cv;
 using namespace std;
@@ -133,6 +134,8 @@ int main(int argc, char *argv[]){
     j["name"] = name;
     j["size"][0] = size.width;
     j["size"][1] = size.height;
+    j["time"] = chrono::duration_cast<chrono::seconds>(
+        chrono::system_clock::now().time_since_epoch()).count(); // time of creation in unix time
 
     // resize the image
     Mat im = Mat::zeros(size, image.type());
