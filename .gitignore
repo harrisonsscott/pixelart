@@ -87,6 +87,8 @@ _deps
 # Other
 /Generate/*.png
 /Generate/images/*
+/Generate/oldInput/*
+/Generate/batchOutput/*
 /Generate/batchInput/*
 *.json
 *.key

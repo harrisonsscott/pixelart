@@ -1,5 +1,6 @@
 import os, time
 from PIL import Image
+import secrets
 
 directory = os.fsencode("./batchInput/")
 inputDir = "./batchInput/"
@@ -19,4 +20,4 @@ for file in os.listdir(directory):
     if fileName != newName:
         os.rename(f"{inputDir}{fileName}", f"{inputDir}{newName}")
 
-    os.system(f"./pixelArt {inputDir}{newName} {outputDir}{jsonName} {width} {height} 1000 1")
+    os.system(f"./pixelArt {inputDir}{newName} {outputDir}{secrets.token_hex(16)}.json {width} {height} 1000 0")

@@ -1548,6 +1548,7 @@ MonoBehaviour:
   target: {fileID: 0}
   material: {fileID: 0}
   mainRef: {fileID: 166998268}
+  classUI: {fileID: 2031864845}
 --- !u!1 &321829080
 GameObject:
   m_ObjectHideFlags: 0
