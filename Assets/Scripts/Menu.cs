@@ -22,8 +22,8 @@ public class Menu : MonoBehaviour
     public Main mainRef; // reference to Main.cs
     public UI classUI;
 
-    ImageData getData(int index){
-        return JsonUtility.FromJson<ImageData>(textAssets[index].text);
+    ImageData getData(TextAsset[] assets, int index){
+        return JsonUtility.FromJson<ImageData>(assets[index].text);
     }
 
     Texture generateImage(ImageData data){
@@ -78,11 +78,13 @@ public class Menu : MonoBehaviour
     {
         // load the menu
         EnablePlayItems(true);
-        textAssets = Resources.LoadAll<TextAsset>("data/");
-        for (int i = 0; i < textAssets.Length; i++)
+        TextAsset[] proImages = Resources.LoadAll<TextAsset>("data/pro");
+
+        // load pro images
+        for (int i = 0; i < proImages.Length; i++)
         {
             int v = i; // v is constant while i isn't
-            ImageData data = getData(i);
+            ImageData data = getData(proImages, i);
 
             GameObject element = Instantiate(previewReference);
             element.transform.parent = proContainer;
@@ -91,7 +93,7 @@ public class Menu : MonoBehaviour
             element.GetComponent<Button>().onClick.AddListener(() => {
                 // load an image
                 EnablePlayItems();
-                mainRef.NewImage(textAssets[v].text);
+                mainRef.NewImage(proImages[v].text);
                 mainRef.RenderImage();
                 mainRef.ChangeCurrentNumber(1);
             });
