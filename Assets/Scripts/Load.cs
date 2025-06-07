@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System;
 
 // loads json files from the data folder
 
@@ -29,12 +30,22 @@ public static class Load
         }
     }
 
-    public static List<ImageData> LoadAllData(){
-        List<ImageData> files = new List<ImageData>();
+    public static List<string> LoadAllDataNames()
+    {
         string path = Application.persistentDataPath + "/data/";
-        string[] filesString = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+        string[] files = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
 
-        foreach (string file in filesString){
+        return files.ToList();
+
+    }
+
+    public static List<ImageData> LoadAllData()
+    {
+        List<ImageData> files = new List<ImageData>();
+        List<string> filesString = LoadAllDataNames();
+
+        foreach (string file in filesString)
+        {
             files.Add(JsonUtility.FromJson<ImageData>(File.ReadAllText(file)));
         }
 
