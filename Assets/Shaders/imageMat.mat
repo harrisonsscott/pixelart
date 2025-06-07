@@ -96,13 +96,13 @@ Material:
     - _Grid: 0
     - _LengthData: 1
     - _NumIndex: 6.26
-    - _NumSelected: 4
+    - _NumSelected: 1
     - _NumberData: 1.37
     - _Solved: 0
     - _Spacing: 0.2
     - _Thickness: 0.02
     - _isBending: 0
     m_Colors:
-    - _GridSize: {r: 32, g: 32, b: 0, a: 0}
+    - _GridSize: {r: 16, g: 16, b: 0, a: 0}
     - _NumberData: {r: 1, g: 2, b: 3, a: 4}
   m_BuildTextureStacks: []

@@ -79,24 +79,29 @@ public class Menu : MonoBehaviour
         // load the menu
         EnablePlayItems(true);
         TextAsset[] proImages = Resources.LoadAll<TextAsset>("data/pro");
-
+        string[] savedData = Load.LoadAllDataNames().ToArray(); // making sure that already started images don't show up in the discover tab
         // load pro images
         for (int i = 0; i < proImages.Length; i++)
         {
             int v = i; // v is constant while i isn't
             ImageData data = getData(proImages, i);
+            // only load unplayed images
+            if (System.Array.IndexOf(savedData, data.name) == -1)
+            {
+                GameObject element = Instantiate(previewReference);
+                element.transform.parent = proContainer;
+                element.GetComponent<RectTransform>().localScale = Vector3.one;
+                element.GetComponent<RawImage>().texture = generateImage(data);
+                element.GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    // load an image
+                    EnablePlayItems();
+                    mainRef.NewImage(proImages[v].text);
+                    mainRef.RenderImage();
+                    mainRef.ChangeCurrentNumber(1);
+                });
+            }
 
-            GameObject element = Instantiate(previewReference);
-            element.transform.parent = proContainer;
-            element.GetComponent<RectTransform>().localScale = Vector3.one;
-            element.GetComponent<RawImage>().texture = generateImage(data);
-            element.GetComponent<Button>().onClick.AddListener(() => {
-                // load an image
-                EnablePlayItems();
-                mainRef.NewImage(proImages[v].text);
-                mainRef.RenderImage();
-                mainRef.ChangeCurrentNumber(1);
-            });
         }
 
         backButton.onClick.AddListener(() => {

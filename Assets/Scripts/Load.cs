@@ -33,7 +33,13 @@ public static class Load
     public static List<string> LoadAllDataNames()
     {
         string path = Application.persistentDataPath + "/data/";
-        string[] files = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+        string[] filesRaw = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+        string[] files = new string[filesRaw.Length];
+
+        for (int i = 0; i < filesRaw.Length; i++)
+        {
+            files[i] = System.IO.Path.GetFileNameWithoutExtension(filesRaw[i]);
+        }
 
         return files.ToList();
 
@@ -42,7 +48,8 @@ public static class Load
     public static List<ImageData> LoadAllData()
     {
         List<ImageData> files = new List<ImageData>();
-        List<string> filesString = LoadAllDataNames();
+        string path = Application.persistentDataPath + "/data/";
+        string[] filesString = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
 
         foreach (string file in filesString)
         {

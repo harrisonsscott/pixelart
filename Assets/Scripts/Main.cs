@@ -66,6 +66,7 @@ public class Main : MonoBehaviour {
     public UI classUI;
 
     private void Start() {
+        Debug.Log(Application.persistentDataPath);
         timer = 1;
 
         if (classUI == null)
