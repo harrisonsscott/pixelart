@@ -99,6 +99,7 @@ public class Menu : MonoBehaviour
                     mainRef.NewImage(proImages[v].text);
                     mainRef.RenderImage();
                     mainRef.ChangeCurrentNumber(1);
+                    Destroy(element);
                 });
             }
 
